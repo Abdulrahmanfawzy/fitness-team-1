@@ -1,4 +1,3 @@
-// src/routes/PrivateRoute.tsx
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoute = () => {

@@ -1,0 +1,13 @@
+
+
+
+export default function OtherTrainers() {
+  return     <>
+      <div className="container w-10/12 mx-auto text-center py-12">
+      <h2 className="profile-heading ">Explore Other Trainers</h2>
+      <p className="text-gray-400 my-4 py-4"></p>
+      <div car></div>
+      </div>
+    </>
+  
+}

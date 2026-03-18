@@ -1,4 +1,3 @@
-// src/routes/PublicRoute.tsx
 import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoute = () => {

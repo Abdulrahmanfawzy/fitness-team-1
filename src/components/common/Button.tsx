@@ -13,7 +13,6 @@ interface ButtonProps {
   disabled?: boolean;
   ariaLabel?: string;
 }
-
 export default function Button({
   text = "",
   width = "w-full",

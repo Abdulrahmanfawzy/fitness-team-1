@@ -63,10 +63,9 @@ const PackagePage = () => {
           />
         ))}
       </div>
-
       <ComparisonTable />
 
-      <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-12">
+      <div className="grid md:grid-cols-2 gap-6 max-w-[1200px] mx-auto mt-12">
         <div className="flex items-start gap-4 p-6 bg-zinc-800/50 border border-zinc-800 rounded-xl">
           <IoShieldCheckmarkSharp className="text-green-500" size={35} />
 

@@ -37,7 +37,7 @@ const ComparisonTable = () => {
   ];
 
   return (
-    <div className="mt-20 w-full max-w-5xl mx-auto border border-zinc-800 rounded-xl bg-[#110e0e] overflow-hidden">
+    <div className="mt-20 w-full max-w-[1200px] mx-auto border border-zinc-800 rounded-xl bg-[#110e0e] overflow-hidden">
       <div className="p-7 text-center border-b border-zinc-800">
         <h2 className="text-2xl font-bold text-white tracking-widest uppercase">
           Compare Features
