@@ -88,5 +88,5 @@ export const getProfile = async (): Promise<{ user: AuthUser }> => {
 export const resetPassword = async (
   payload: ResetPasswordPayload,
 ): Promise<void> => {
-  await client.post("/reset-password", payload);
+  await client.post("/reset-password", null, { params: payload });
 };
