@@ -69,7 +69,7 @@ const TrainingCart = () => {
                         rating={+trainer.rating || 4.5}
                         location={trainer.location || "Cario, Egypt"}
                         specialties={trainer.specializations ?? []}
-                        experience_years={trainer.experience_years || 10}
+                        experience_years={trainer.experience_years || 5}
                       />
                     ))}
             </div>

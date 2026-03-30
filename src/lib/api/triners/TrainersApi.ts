@@ -25,10 +25,10 @@ export const getSearchResults = async (
     id: user.trainer_id,
     name: user.name,
     profile_image: user.profile_image,
-    rating: user.rating ?? 0,
-    location: user.location,
+    rating: user.rating,
+    location: user.location ,
     specializations: user.specializations ?? [],
-    experience_years: user.experience_years ?? 0,
+    experience_years: user.experience_years,
   }));
 };
 
@@ -51,16 +51,18 @@ export const getFilterResults = async (
     id: user.trainer_id,
     name: user.name,
     profile_image: user.profile_image,
-    rating: user.rating ?? 0,
+    rating: user.rating,
     location: user.location,
     specializations: user.specializations ?? [],
-    experience_years: user.experience_years ?? 0,
+    experience_years: user.experience_years,
   }));
 };
 
 // Get Filter Values
-export const getFilterValues = async (): Promise<FilterValues[]| undefined> => {
+export const getFilterValues = async (): Promise<
+  FilterValues[] | undefined
+> => {
   const response = await client.get("/specializations");
-  
+
   return response.data.data;
 };

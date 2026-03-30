@@ -62,9 +62,11 @@ const FilterBar = () => {
               </Button>
             )}
           </div>
-          <p className="cursor-pointer" onClick={handelClear}>
-            Clear Filter
-          </p>
+          {enabled  && (
+            <p className="cursor-pointer" onClick={handelClear}>
+              Clear Filter
+            </p>
+          )}
         </div>
       </div>
     </div>
