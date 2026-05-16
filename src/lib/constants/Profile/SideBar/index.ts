@@ -18,7 +18,7 @@ type MenuItem = {
 };
 export const menuItems: MenuItem[] = [
   {
-    label: "Personal Info",
+    label: "Profile Overview",
     path: "/profile/overview",
     icon: User,
   },

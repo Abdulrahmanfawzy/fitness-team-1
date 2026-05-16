@@ -1,34 +1,42 @@
 import { Link, useNavigate } from "react-router-dom";
-import { UserCircle, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { NAVBAR_ACTIONS } from "@/lib/constants/navbar/navbar.constants";
 import { useAuth } from "@/hooks/useAuth";
 import MobileSideBar from "@/components/common/SideBar/MobileSidebar";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import userAvatar from "@/assets/user2.jpg";
+import { useEffect, useState } from "react";
 
 export default function NavbarActions() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
 
+  useEffect(() => {
+    setImgError(false);
+  }, [user?.profile_image]);
+
   if (isLoggedIn) {
+    console.log("navbar user:", user?.profile_image);
     return (
       <>
         <div className="hidden lg:block">
           <button
             onClick={() => navigate("/profile/overview")}
             className="relative group cursor-pointer">
-            {!imgError ? (
+            {user?.profile_image && !imgError ? (
               <img
-                src={userAvatar}
+                src={user.profile_image}
                 alt="Profile"
                 onError={() => setImgError(true)}
                 className="w-9.5 h-9.5 mt-1 rounded-2xl object-cover ring-2 ring-transparent group-hover:ring-primary transition-all duration-200"
               />
             ) : (
-              <UserCircle size={36} className="text-primary" />
+              <div className="w-9.5 h-9.5 mt-1 rounded-2xl bg-primary/20 flex items-center justify-center ring-2 ring-transparent group-hover:ring-primary transition-all duration-200">
+                <span className="text-sm font-bold text-primary">
+                  {user?.name?.charAt(0).toUpperCase()}
+                </span>
+              </div>
             )}
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-background" />
           </button>

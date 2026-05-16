@@ -2,11 +2,11 @@ import { CalendarCheck, Clock, Package, Camera } from "lucide-react";
 
 interface ProfileHeaderProps {
   name: string;
-  member: number;
+  member: number | string;
   sessionComplete: number;
   activePackage: string;
   nextSession: string;
-  avatarUrl: string;
+  avatarUrl?: string;
   onAvatarClick?: () => void;
   onEditProfile?: () => void;
 }
@@ -33,7 +33,6 @@ export default function ProfileHeader({
   nextSession,
   avatarUrl,
   onAvatarClick,
-  onEditProfile,
 }: ProfileHeaderProps) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
@@ -55,11 +54,19 @@ export default function ProfileHeader({
             <div
               className="relative group cursor-pointer"
               onClick={onAvatarClick}>
-              <img
-                src={avatarUrl}
-                alt={name}
-                className="w-20 h-20 rounded-2xl object-cover ring-4 ring-card shadow-xl transition-opacity duration-200 group-hover:opacity-70"
-              />
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={name}
+                  className="w-20 h-20 rounded-2xl object-cover ring-4 ring-card shadow-xl transition-opacity duration-200 group-hover:opacity-70"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-2xl bg-primary/20 ring-4 ring-card shadow-xl flex items-center justify-center transition-opacity duration-200 group-hover:opacity-70">
+                  <span className="text-2xl font-bold text-primary">
+                    {name?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
               <div className="absolute inset-0 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <Camera className="w-6 h-6 text-white drop-shadow-md" />
               </div>

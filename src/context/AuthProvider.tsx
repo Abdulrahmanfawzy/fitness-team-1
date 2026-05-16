@@ -50,11 +50,28 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("is_profile_complete");
   };
 
-  if (loading) return null;
+  const updateUser = (updated: Partial<AuthUser>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const merged = { ...prev, ...updated };
+      localStorage.setItem("user", JSON.stringify(merged));
+      return merged;
+    });
+  };
 
+  if (loading) return null;
+  console.log("provider user:", user?.profile_image);
   return (
     <AuthContext.Provider
-      value={{ user, token, isLoggedIn, isProfileComplete, login, logout }}>
+      value={{
+        user,
+        token,
+        isLoggedIn,
+        isProfileComplete,
+        login,
+        logout,
+        updateUser,
+      }}>
       {children}
     </AuthContext.Provider>
   );

@@ -2,13 +2,16 @@ import { LockKeyholeIcon, ShieldCheck } from "lucide-react";
 import InputField from "../../components/Auth/InputField";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema, type signUpFormData } from "@/lib/schemas/signup.schema";
+import {
+  changePasswordSchema,
+  type ChangePasswordFormData,
+} from "@/lib/schemas/changePassword.schema";
 
 const fields = [
   {
     label: "Current Password",
     placeholder: "Enter your current password",
-    key: "currentPassword" as const,
+    key: "current_password" as const,
   },
   {
     label: "New Password",
@@ -18,7 +21,7 @@ const fields = [
   {
     label: "Confirm New Password",
     placeholder: "Re-enter your new password",
-    key: "confirmPassword" as const,
+    key: "password_confirmation" as const,
   },
 ];
 
@@ -26,13 +29,15 @@ export default function SecurityPassword() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<signUpFormData>({
-    resolver: zodResolver(signUpSchema),
+    reset,
+    formState: { errors, isDirty, isSubmitting },
+  } = useForm<ChangePasswordFormData>({
+    resolver: zodResolver(changePasswordSchema),
   });
 
-  const onSubmit = (data: signUpFormData) => {
+  const onSubmit = (data: ChangePasswordFormData) => {
     console.log(data);
+    reset();
   };
 
   return (
@@ -67,7 +72,7 @@ export default function SecurityPassword() {
                 placeholder={placeholder}
                 type="password"
                 register={register("password")}
-                error={errors.password}
+                error={errors[key]}
                 icon={<LockKeyholeIcon size={16} />}
               />
             ))}
@@ -75,8 +80,11 @@ export default function SecurityPassword() {
 
           <hr className="border-(--gray-color) max-w-lg" />
 
-          <button className="w-full max-w-lg h-13 text-base font-semibold text-white bg-primary rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 shadow-lg shadow-primary/25 transition-all duration-200 cursor-pointer">
-            Update Password
+          <button
+            type="submit"
+            disabled={!isDirty || isSubmitting}
+            className="w-full max-w-lg h-13 text-base font-semibold text-white bg-primary rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 shadow-lg shadow-primary/25 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+            {isSubmitting ? "Updating..." : "Update Password"}
           </button>
         </form>
       </div>

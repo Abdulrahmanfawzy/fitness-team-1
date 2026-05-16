@@ -8,6 +8,7 @@ interface AuthContextType {
   isProfileComplete: boolean;
   login: (user: AuthUser, token: string, isProfileComplete: boolean) => void;
   logout: () => void;
+  updateUser: (updated: Partial<AuthUser>) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);

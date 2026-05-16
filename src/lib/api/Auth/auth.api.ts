@@ -11,7 +11,11 @@ export interface AuthUser {
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
-  
+  // Profile fields
+  about_me: string | null;
+  fitness_goals: string | null;
+  preferred_training: string | null;
+  membership_date: string | null;  
 }
 
 export interface AuthResponse {

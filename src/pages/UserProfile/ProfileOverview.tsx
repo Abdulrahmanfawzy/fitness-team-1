@@ -2,8 +2,9 @@ import InfoTagCard from "../../components/common/UserProfile/InfoTagCard";
 import { BowArrow, Dumbbell } from "lucide-react";
 import React, { useRef, useState } from "react";
 import ProfileHeader from "@/components/common/UserProfile/ProfileHeader";
-import userAvatar from "@/assets/user2.jpg";
-
+import { useAuth } from "@/hooks/useAuth";
+import { uploadProfileImage } from "@/lib/api/profile.api";
+import { useMutation } from "@tanstack/react-query";
 interface ProfileOverviewProps {
   aboutMe: string;
   fitnessGoal: string;
@@ -15,13 +16,25 @@ export default function ProfileOverview({
   fitnessGoal,
   preferredTraining,
 }: ProfileOverviewProps) {
+  const { user, updateUser } = useAuth();
   const uploadInp = useRef<HTMLInputElement>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
+  const [url, setUrl] = useState<string | null>(null);
+
+  const { mutate: uploadImage } = useMutation({
+    mutationFn: uploadProfileImage,
+    onSuccess: (data) => {
+      updateUser({ profile_image: data?.profile_image });
+      setUrl(null);
+    },
+  });
 
   const changePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setAvatarUrl(URL.createObjectURL(file));
+    const preview = URL.createObjectURL(file);
+    setUrl(preview);
+    updateUser({ profile_image: preview });
+    uploadImage(file);
   };
 
   return (
@@ -34,17 +47,20 @@ export default function ProfileOverview({
       </div>
 
       <ProfileHeader
-        name="Mohamed Alaa"
-        member={2022}
+        name={user?.name ?? ""}
+        member={
+          user?.membership_date
+            ? new Date(user.membership_date).getFullYear()
+            : ""
+        }
         sessionComplete={48}
         activePackage="Single Pack"
         nextSession="Today, 9:00 AM"
-        avatarUrl={avatarUrl ?? userAvatar}
+        avatarUrl={url ?? user?.profile_image ?? undefined}
         onAvatarClick={() => uploadInp.current?.click()}
         onEditProfile={() => console.log("edit profile")}
       />
 
-      {/* Hidden file input */}
       <input
         type="file"
         accept="image/jpeg,image/gif,image/png"
@@ -53,7 +69,6 @@ export default function ProfileOverview({
         onChange={changePhoto}
       />
 
-      {/* About Me */}
       <div className="rounded-2xl border border-border bg-card p-6">
         <h3 className="text-base font-semibold text-foreground mb-3">
           About Me
@@ -63,7 +78,6 @@ export default function ProfileOverview({
         </p>
       </div>
 
-      {/* Info Tags */}
       <div className="flex flex-col sm:flex-row gap-4">
         <InfoTagCard
           icon={<BowArrow size={18} />}
