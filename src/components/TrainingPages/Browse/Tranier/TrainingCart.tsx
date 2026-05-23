@@ -10,7 +10,6 @@ import NotFoundSearch from "../NotFound/NotFoundSearch";
 import { useSearchParams } from "react-router-dom";
 import { useFilterContext } from "@/context/FilterContext";
 import { SkeletonCard } from "./Loading/SkeletonCard";
-import NotLoggedIn from "../../../common/NotLogiin/NotLoggedIn";
 
 const TrainingCart = () => {
   const { durationId, specializationId, enabled } = useFilterContext()!;
@@ -41,23 +40,21 @@ const TrainingCart = () => {
   const handleMore = () => {
     SetLoad((pre) => pre + 3);
   };
-  const token = localStorage.getItem("token");
-  if (!token) return <NotLoggedIn />;
+
   return (
     <>
-    
       {search && searchResults?.length === 0 && !searchLoading ? (
         <div className="flex flex-column justify-center items-center text-center">
           <NotFoundSearch />
         </div>
       ) : (
-        <div className="bg-gradient-to-b from-[#1F0D0D] to-[#1c1717] pb-10 w-full ">
-          <div className="w-full px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl pt-[58px]">
+        <div className="bg-linear-to-b from-[#1F0D0D] to-[#1c1717] pb-10 w-full">
+          <div className="w-full px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl pt-14.5">
             <p className="text-[32px] text-center sm:text-start">
               Meet Our <span className="text-primary">Trainers</span>
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-[39px] gap-x-5 gap-y-12 justify-items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-9.75 gap-x-5 gap-y-12 justify-items-center">
               {loading
                 ? Array.from({ length: 3 }).map((_, i) => (
                     <SkeletonCard key={i} />
@@ -81,9 +78,8 @@ const TrainingCart = () => {
             {(data?.length ?? 0) > Load && (
               <div className="flex items-center justify-center mt-10">
                 <Button
-                  className="px-10 py-6  text-[18px] fw-medium rounded-[5px] bg-primary hover:bg-cta-hover cursor-pointer  transition-all"
-                  onClick={handleMore}
-                >
+                  className="px-10 py-6 text-[18px] fw-medium rounded-[5px] bg-primary hover:bg-cta-hover cursor-pointer transition-all"
+                  onClick={handleMore}>
                   Load More
                 </Button>
               </div>

@@ -13,7 +13,7 @@ interface Props<T extends FieldValues> {
   control: Control<T>;
   error?: string;
   onChangeTransform?: (value: string) => unknown;
-  valueTransform?: (fieldValue: any, item: string) => boolean;
+  valueTransform?: (fieldValue: unknown, item: string) => boolean;
 }
 
 export default function RadioGroup<T extends FieldValues>({

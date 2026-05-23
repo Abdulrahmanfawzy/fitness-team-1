@@ -31,18 +31,27 @@ export const router = createBrowserRouter([
     path: "/",
     element: <MainLayout />,
     children: [
+      // Public routes
       { index: true, element: <Home /> },
       { path: "trainers", element: <TrainingPage /> },
       { path: "trainer/:id", element: <TrainerProfile /> },
       { path: "packages", element: <PackagePage /> },
       { path: "contact-us", element: <ContactUs /> },
+
+      // Protected
       {
         path: "booking",
-        element: (
-          <StripeWrapper>
-            <Booking />
-          </StripeWrapper>
-        ),
+        element: <PrivateRoute />,
+        children: [
+          {
+            index: true,
+            element: (
+              <StripeWrapper>
+                <Booking />
+              </StripeWrapper>
+            ),
+          },
+        ],
       },
       {
         path: "profile",
@@ -52,22 +61,8 @@ export const router = createBrowserRouter([
           {
             element: <ProfileLayout />,
             children: [
-              {
-                path: "overview",
-                element: (
-                  <ProfileOverview
-                    aboutMe="Fitness enthusiast focused on strength training and overall wellness. Training consistently for 2 years. Looking to push my limits and achieve new personal records in deadlifts and squats while maintaining a balanced lifestyle."
-                    fitnessGoal="Build Muscle"
-                    preferredTraining="Both (Online & Gym)"
-                  />
-                ),
-              },
-              {
-                path: "personal-info",
-                element: (
-                  <PersonalInfoForm onSave={() => console.log("save")} />
-                ),
-              },
+              { path: "overview", element: <ProfileOverview /> },
+              { path: "personal-info", element: <PersonalInfoForm /> },
               {
                 path: "sessions",
                 element: (
@@ -149,6 +144,8 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
+  // Auth routes
   {
     path: "/auth",
     element: <PublicRoute />,
@@ -160,6 +157,8 @@ export const router = createBrowserRouter([
       { path: "reset-password", element: <ResetPass /> },
     ],
   },
+
+  // Protected 
   {
     path: "info",
     element: <PrivateRoute />,

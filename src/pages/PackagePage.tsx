@@ -15,23 +15,20 @@ const PackagePage = () => {
   const { data } = useQuery({
     queryKey: ["packages"],
     queryFn: async () => {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
+      const headers = { Authorization: `Bearer ${token}` };
       const response = await fetch(`${import.meta.env.VITE_API_URL}/packages`, {
         headers,
       });
-
       const responseData = await response.json();
       const packages = responseData.data || [];
-
       return packages.map((pkg: RawPackageFromAPI) => ({
         id: pkg.id,
         title: pkg.title + " Pack",
         price: "EGP " + pkg.price,
         sessions: pkg.sessions + " SESSIONS",
-        features: pkg.features,
+        features: pkg.features.map((f: string) =>
+          f.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+        ),
       })) as (PackageType & { id: number })[];
     },
     retry: false,
@@ -48,7 +45,7 @@ const PackagePage = () => {
         </p>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {packages.map((pkg) => (
           <PackageCard
             key={pkg.id}
@@ -60,12 +57,15 @@ const PackagePage = () => {
           />
         ))}
       </div>
+
       <ComparisonTable />
 
-      <div className="grid md:grid-cols-2 gap-6 max-w-[1200px] mx-auto mt-12">
+      <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-12">
         <div className="flex items-start gap-4 p-6 bg-zinc-800/50 border border-zinc-800 rounded-xl">
-          <IoShieldCheckmarkSharp className="text-green-500" size={35} />
-
+          <IoShieldCheckmarkSharp
+            className="text-green-500 shrink-0"
+            size={35}
+          />
           <div>
             <h4 className="font-bold text-sm uppercase">
               30-Day Money-Back Guarantee
@@ -77,8 +77,7 @@ const PackagePage = () => {
           </div>
         </div>
         <div className="flex items-start gap-4 p-6 bg-zinc-800/50 border border-zinc-800 rounded-xl">
-          <MdVerified className="text-green-500" size={40} />
-
+          <MdVerified className="text-green-500 shrink-0" size={40} />
           <div>
             <h4 className="font-bold text-sm uppercase">
               All Trainers Certified

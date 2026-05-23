@@ -22,7 +22,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setUser(response.user);
         setIsProfileComplete(storedProfileComplete === "1");
       })
-      .catch(() => {
+      .catch((error) => {
+        if (import.meta.env.DEV) {
+          console.error("Failed to fetch profile:", error);
+        }
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         localStorage.removeItem("is_profile_complete");
@@ -60,7 +63,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   if (loading) return null;
-  console.log("provider user:", user?.profile_image);
   return (
     <AuthContext.Provider
       value={{

@@ -17,7 +17,6 @@ export default function NavbarActions() {
   }, [user?.profile_image]);
 
   if (isLoggedIn) {
-    console.log("navbar user:", user?.profile_image);
     return (
       <>
         <div className="hidden lg:block">

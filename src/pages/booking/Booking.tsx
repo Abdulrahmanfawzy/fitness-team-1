@@ -69,7 +69,9 @@ const Booking = () => {
     }
 
     // Production: POST paymentMethod.id → backend → clientSecret → confirmCardPayment
-    console.log("[Stripe] PaymentMethod created:", paymentMethod?.id);
+    if (import.meta.env.DEV) {
+      console.warn("[Stripe] PaymentMethod created:", paymentMethod?.id);
+    }
     await new Promise((r) => setTimeout(r, 1800));
     setIsProcessing(false);
     setIsConfirmed(true);

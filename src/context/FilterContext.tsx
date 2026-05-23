@@ -4,7 +4,7 @@ export type FilterContextType = {
   enabled: boolean;
   durationId: number;
   specializationId: number;
-  setdurationIdr: (id: number) => void;
+  setDurationId: (id: number) => void;
   setSpecializationId: (id: number) => void;
   setEnabled: (enabled: boolean) => void;
 };

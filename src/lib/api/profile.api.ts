@@ -4,8 +4,8 @@ export interface UpdateProfilePayload {
   name: string;
   email: string;
   about_me?: string | null;
-  fitness_goal?: string | null;
-  preferred_training_days?: string | null;
+  fitness_goals?: string | null;
+  preferred_training?: string | null;
 }
 
 interface FitnessProfile {
@@ -43,5 +43,5 @@ export const uploadProfileImage = async (
 };
 
 export const removeProfileImage = async (): Promise<void> => {
-  await client.delete("/landing/removeImage");
+  await client.delete("/profile/remove-image");
 };

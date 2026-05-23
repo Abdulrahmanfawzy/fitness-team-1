@@ -5,17 +5,8 @@ import ProfileHeader from "@/components/common/UserProfile/ProfileHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { uploadProfileImage } from "@/lib/api/profile.api";
 import { useMutation } from "@tanstack/react-query";
-interface ProfileOverviewProps {
-  aboutMe: string;
-  fitnessGoal: string;
-  preferredTraining: string;
-}
 
-export default function ProfileOverview({
-  aboutMe,
-  fitnessGoal,
-  preferredTraining,
-}: ProfileOverviewProps) {
+export default function ProfileOverview() {
   const { user, updateUser } = useAuth();
   const uploadInp = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState<string | null>(null);
@@ -58,7 +49,9 @@ export default function ProfileOverview({
         nextSession="Today, 9:00 AM"
         avatarUrl={url ?? user?.profile_image ?? undefined}
         onAvatarClick={() => uploadInp.current?.click()}
-        onEditProfile={() => console.log("edit profile")}
+        onEditProfile={() => {
+          if (import.meta.env.DEV) console.warn("edit profile");
+        }}
       />
 
       <input
@@ -74,7 +67,7 @@ export default function ProfileOverview({
           About Me
         </h3>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          {aboutMe}
+          {user?.about_me ?? "No bio added yet."}
         </p>
       </div>
 
@@ -82,12 +75,12 @@ export default function ProfileOverview({
         <InfoTagCard
           icon={<BowArrow size={18} />}
           label="Fitness Goal"
-          value={fitnessGoal}
+          value={user?.fitness_goals ?? "Not set"}
         />
         <InfoTagCard
           icon={<Dumbbell size={18} />}
           label="Preferred Training"
-          value={preferredTraining}
+          value={user?.preferred_training ?? "Not set"}
         />
       </div>
     </div>

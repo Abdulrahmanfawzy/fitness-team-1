@@ -35,8 +35,7 @@ export default function SecurityPassword() {
     resolver: zodResolver(changePasswordSchema),
   });
 
-  const onSubmit = (data: ChangePasswordFormData) => {
-    console.log(data);
+  const onSubmit = () => {
     reset();
   };
 

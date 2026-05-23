@@ -2,7 +2,13 @@ import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BOOKING } from "@/lib/constants/booking";
 
-export const BookingConfirmed: React.FC = () => {
+interface BookingConfirmedProps {
+  onBackToHome?: () => void;
+}
+
+export const BookingConfirmed: React.FC<BookingConfirmedProps> = ({
+  onBackToHome,
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -49,7 +55,7 @@ export const BookingConfirmed: React.FC = () => {
 
       {/* Back Button */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => onBackToHome?.() || navigate("/")}
         className="w-full py-3 rounded-xl cursor-pointer bg-cta-primary hover:bg-red-600 active:scale-[0.98] transition-all text-white font-semibold text-sm">
         Back To Home
       </button>

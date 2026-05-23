@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FilterContext } from "./FilterContext";
 const FilterProvider = ({ children }: { children: React.ReactNode }) => {
   const [enabled, setEnabled] = useState(false);
-  const [durationId, setdurationIdr] = useState(1);
+  const [durationId, setDurationId] = useState(1);
   const [specializationId, setSpecializationId] = useState<number>(0);
   return (
     <FilterContext.Provider
@@ -10,11 +10,10 @@ const FilterProvider = ({ children }: { children: React.ReactNode }) => {
         enabled,
         durationId,
         specializationId,
-        setdurationIdr,
+        setDurationId,
         setSpecializationId,
         setEnabled,
-      }}
-    >
+      }}>
       {children}
     </FilterContext.Provider>
   );
