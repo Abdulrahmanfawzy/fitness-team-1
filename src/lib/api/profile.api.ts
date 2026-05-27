@@ -61,7 +61,20 @@ export interface PaymentMethod {
   last_four: string | null;
   is_default: boolean;
 }
+
 // ─── API Calls ────────────────────────────────────────────────────────────────
+
+export const saveFitnessProfile = async (
+  payload: FitnessProfilePayload,
+): Promise<void> => {
+  await client.post("/profile/fitness-profile", payload);
+};
+
+export const updateUserProfile = async (
+  payload: UpdateProfilePayload,
+): Promise<void> => {
+  await client.put("/profile", payload);
+};
 
 export const getSessions = async (): Promise<Session[]> => {
   const { data } = await client.get("/profile/session");
