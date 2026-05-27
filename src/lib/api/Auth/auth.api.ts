@@ -9,6 +9,24 @@ export interface AuthUser {
   about_me: string | null;
   fitness_goals: string | null;
   preferred_training: string | null;
+  // fitness profile fields from Info page
+  gender: string | null;
+  age: number | null;
+  height_cm: number | null;
+  weight_kg: number | null;
+  fitness_level: string | null;
+  workout_location: string | null;
+  preferred_training_days: string | null;
+  // invoices
+  invoices: Invoice[];
+}
+
+export interface Invoice {
+  invoice_id: string;
+  date: string;
+  description: string;
+  amount: string;
+  status: string;
 }
 
 export interface AuthResponse {
@@ -78,7 +96,13 @@ export const forgotPassword = async (
 
 export const getProfile = async (): Promise<{ user: AuthUser }> => {
   const { data } = await client.get("/profile");
-  return { user: data };
+  const { 0: invoices, ...rest } = data;
+  return {
+    user: {
+      ...rest,
+      invoices: invoices ?? [],
+    },
+  };
 };
 
 export const resetPassword = async (

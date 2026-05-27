@@ -1,5 +1,7 @@
 import client from "./client";
 
+// ─── Payload Types ────────────────────────────────────────────────────────────
+
 export interface UpdateProfilePayload {
   name: string;
   email: string;
@@ -8,7 +10,7 @@ export interface UpdateProfilePayload {
   preferred_training?: string | null;
 }
 
-interface FitnessProfile {
+export interface FitnessProfilePayload {
   gender: string;
   age: number;
   height_cm: number;
@@ -19,16 +21,71 @@ interface FitnessProfile {
   preferred_training_days: string;
 }
 
-export const saveFitnessProfile = async (
-  payload: FitnessProfile,
-): Promise<void> => {
-  await client.post("/profile/fitness-profile", payload);
+// ─── Response Types ───────────────────────────────────────────────────────────
+
+export interface Session {
+  id: number;
+  trainer_name: string;
+  date: string;
+  time: string;
+  status: string;
+  package_name: string;
+}
+
+export interface Package {
+  id: number;
+  name: string;
+  status: string;
+  sessions_total: number;
+  sessions_used: number;
+  expires_at: string | null;
+}
+
+export interface ProgressActivity {
+  completed_sessions: number;
+  upcoming_sessions: number;
+  cancelled_sessions: number;
+}
+
+export interface WorkoutHistory {
+  id: number;
+  date: string;
+  exercise: string;
+  duration_minutes: number;
+  calories_burned: number | null;
+}
+
+export interface PaymentMethod {
+  id: number;
+  type: string;
+  last_four: string | null;
+  is_default: boolean;
+}
+// ─── API Calls ────────────────────────────────────────────────────────────────
+
+export const getSessions = async (): Promise<Session[]> => {
+  const { data } = await client.get("/profile/session");
+  return data.sessions;
 };
 
-export const updateUserProfile = async (
-  payload: UpdateProfilePayload,
-): Promise<void> => {
-  await client.put("/profile", payload);
+export const getPackages = async (): Promise<Package[]> => {
+  const { data } = await client.get("/profile/packages");
+  return data.packages;
+};
+
+export const getProgressActivity = async (): Promise<ProgressActivity> => {
+  const { data } = await client.get("/profile/progress-activity");
+  return data.progress;
+};
+
+export const getWorkoutHistory = async (): Promise<WorkoutHistory[]> => {
+  const { data } = await client.get("/profile/workoutHistory");
+  return data.history;
+};
+
+export const getPaymentMethods = async (): Promise<PaymentMethod[]> => {
+  const { data } = await client.get("/profile/payment-methods");
+  return data.payment_methods;
 };
 
 export const uploadProfileImage = async (

@@ -1,23 +1,19 @@
-// MyPackages.tsx
 import { Check, Package, ArrowUpRight } from "lucide-react";
 import ProgressBar from "../../components/common/UserProfile/ProgressBar";
 import { useNavigate } from "react-router-dom";
+import { usePackages } from "@/hooks/useProfileData";
 
-interface Package {
-  name: string;
-  status: "Active" | "Expired";
-  expiryDate: string;
-  sessionsRemaining: number;
-  totalSessions: number;
-  includes: string[];
-}
-
-interface MyPackagesProps {
-  pack: Package;
-}
-
-export default function MyPackages({ pack }: MyPackagesProps) {
+export default function MyPackages() {
   const navigate = useNavigate();
+  const { data: packages = [], isLoading } = usePackages();
+  const pack = packages.find((p) => p.status === "Active") ?? packages[0];
+
+  if (isLoading) return <p className="text-white px-10">Loading packages...</p>;
+
+  if (!pack)
+    return (
+      <p className="text-(--gray-color) px-10">No active package found.</p>
+    );
 
   return (
     <div className="flex flex-col gap-5 mx-4 sm:mx-10">
@@ -45,7 +41,9 @@ export default function MyPackages({ pack }: MyPackagesProps) {
                 </span>
               </div>
               <span className="text-md text-(--gray-color) mt-0.5 block">
-                Expires on {pack.expiryDate}
+                {pack.expires_at
+                  ? `Expires on ${pack.expires_at}`
+                  : "No expiry date"}
               </span>
             </div>
           </div>
@@ -61,18 +59,22 @@ export default function MyPackages({ pack }: MyPackagesProps) {
         {/* Progress */}
         <div className="p-6 border-b border-(--gray-color)">
           <ProgressBar
-            current={pack.sessionsRemaining}
-            total={pack.totalSessions}
+            current={pack.sessions_used}
+            total={pack.sessions_total}
           />
         </div>
 
-        {/* Includes */}
+        {/* Stats */}
         <div className="p-6">
           <span className="text-sm font-semibold text-(--gray-color) uppercase tracking-wider">
-            Package Includes
+            Session Usage
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            {pack.includes.map((feature) => (
+            {[
+              `${pack.sessions_used} sessions used`,
+              `${pack.sessions_total - pack.sessions_used} sessions remaining`,
+              `${pack.sessions_total} total sessions`,
+            ].map((feature) => (
               <div
                 key={feature}
                 className="flex items-center gap-2.5 text-md text-white">

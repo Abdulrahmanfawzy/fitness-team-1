@@ -1,34 +1,11 @@
-import WorkoutRow from "../../components/common/UserProfile/WorkoutRow";
-
-const workouts = [
-  {
-    title: "Upper Body Strength",
-    date: "Oct 18, 2024",
-    duration: "60 min",
-    cals: 420,
-  },
-  { title: "HIIT Cardio", date: "Oct 15, 2024", duration: "45 min", cals: 550 },
-  {
-    title: "Lower Body Power",
-    date: "Oct 12, 2024",
-    duration: "60 min",
-    cals: 480,
-  },
-  {
-    title: "Core & Stability",
-    date: "Oct 10, 2024",
-    duration: "40 min",
-    cals: 310,
-  },
-  {
-    title: "Full Body Circuit",
-    date: "Oct 7, 2024",
-    duration: "75 min",
-    cals: 620,
-  },
-];
+import WorkoutRow from "@/components/common/UserProfile/WorkoutRow";
+import { useWorkoutHistory } from "@/hooks/useProfileData";
 
 export default function WorkoutHistory() {
+  const { data: workouts = [], isLoading } = useWorkoutHistory();
+
+  if (isLoading) return <p className="text-white px-10">Loading...</p>;
+
   return (
     <div className="flex flex-col gap-8 px-4 sm:px-10">
       <div>
@@ -56,15 +33,21 @@ export default function WorkoutHistory() {
         </div>
 
         <div className="flex flex-col gap-2 p-4">
-          {workouts.map((w) => (
-            <WorkoutRow
-              key={w.title}
-              title={w.title}
-              date={w.date}
-              duration={w.duration}
-              cals={w.cals}
-            />
-          ))}
+          {workouts.length === 0 ? (
+            <p className="text-(--gray-color) text-sm p-2">
+              No workout history yet.
+            </p>
+          ) : (
+            workouts.map((w) => (
+              <WorkoutRow
+                key={w.id}
+                title={w.exercise}
+                date={w.date}
+                duration={`${w.duration_minutes} min`}
+                cals={w.calories_burned ?? 0}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>

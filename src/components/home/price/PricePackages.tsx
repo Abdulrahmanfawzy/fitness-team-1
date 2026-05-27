@@ -1,59 +1,41 @@
 import PackageCard from "@/components/common/PackageCard";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const packages = [
-  {
-    title: "Single Pack",
-    price: "150",
-    sessions: "1 SESSION",
-    features: [
-      "Try any Trainer",
-      "No Commitment",
-      "Full Session Access",
-      "Post-Workout Plan",
-    ],
-  },
-  {
-    title: "Monthly Pack",
-    price: "1000",
-    sessions: "15 SESSIONS",
-    features: [
-      "Dedicated Trainer",
-      "Nutrition Plan Included",
-      "Progress Tracking",
-      "Priority Scheduling",
-    ],
-  },
-  {
-    title: "Premium Pack",
-    price: "3000",
-    sessions: "50 SESSIONS",
-    features: [
-      "Dedicated Trainer",
-      "Full Coaching Program",
-      "24/7 Trainer Access",
-      "Custom Meal Plans",
-    ],
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import client from "@/lib/api/client";
+import type { RawPackageFromAPI } from "@/lib/types/package-types";
 
 export default function PricePackages() {
-  const [selectedPackage, setSelectedPackage] = useState("Monthly Pack");
   const navigate = useNavigate();
+
+  const { data: packages = [] } = useQuery({
+    queryKey: ["packages"],
+    queryFn: async () => {
+      const { data } = await client.get("/packages");
+      const list = data.data || [];
+      return list.map((pkg: RawPackageFromAPI) => ({
+        id: pkg.id,
+        title: pkg.title + " Pack",
+        price: "EGP " + pkg.price,
+        sessions: pkg.sessions + " SESSIONS",
+        features: pkg.features.map((f: string) =>
+          f.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+        ),
+      }));
+    },
+    retry: false,
+  });
 
   return (
     <>
       <div className="mt-10 grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {packages.map((pkg) => (
           <PackageCard
-            key={pkg.title}
+            key={pkg.id}
             title={pkg.title}
             price={pkg.price}
             sessions={pkg.sessions}
             features={pkg.features}
-            isRecommended={selectedPackage === pkg.title}
-            onClick={() => setSelectedPackage(pkg.title)}
+            isRecommended={pkg.id === 2}
           />
         ))}
       </div>
@@ -61,8 +43,7 @@ export default function PricePackages() {
       <button
         type="button"
         className="mt-8 text-lg font-semibold text-primary transition-colors hover:text-primary/80 cursor-pointer"
-        onClick={() => navigate("/packages")}
-      >
+        onClick={() => navigate("/packages")}>
         Compare all package features {">"}
       </button>
     </>

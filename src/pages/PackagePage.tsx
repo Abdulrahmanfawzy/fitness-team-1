@@ -1,26 +1,17 @@
 import ComparisonTable from "@/components/common/package/ComparisonTable";
 import PackageCard from "@/components/common/PackageCard";
-import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AuthContext } from "@/context/AuthContext";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
 import { MdVerified } from "react-icons/md";
 import type { PackageType, RawPackageFromAPI } from "@/lib/types/package-types";
+import client from "@/lib/api/client";
 
 const PackagePage = () => {
-  const auth = useContext(AuthContext);
-  const token =
-    auth?.token || "4|yrxEfrnyslP7HK55ge7r2pt8to0gCq3lzz6YhMee993dbc51";
-
   const { data } = useQuery({
     queryKey: ["packages"],
     queryFn: async () => {
-      const headers = { Authorization: `Bearer ${token}` };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/packages`, {
-        headers,
-      });
-      const responseData = await response.json();
-      const packages = responseData.data || [];
+      const { data } = await client.get("/packages");
+      const packages = data.data || [];
       return packages.map((pkg: RawPackageFromAPI) => ({
         id: pkg.id,
         title: pkg.title + " Pack",

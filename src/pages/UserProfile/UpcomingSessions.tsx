@@ -1,62 +1,11 @@
+import SessionCard from "@/components/common/UserProfile/SessionCard";
+import { useSessions } from "@/hooks/useProfileData";
 import { Link } from "react-router-dom";
-import SessionCard from "../../components/common/UserProfile/SessionCard";
 
-interface Session {
-  id: string;
-  sessionName: string;
-  trainerName: string;
-  date: string;
-  time: string;
-  location: string;
-}
+export default function UpcomingSessions() {
+  const { data: sessions = [], isLoading } = useSessions();
 
-interface UpcomingSessionsProps {
-  sessions: Session[];
-  onReschedule?: (id: string) => void;
-  onViewDetails?: (id: string) => void;
-}
-
-const mockSessions: Session[] = [
-  {
-    id: "1",
-    sessionName: "Strength Training",
-    trainerName: "Sarah Jenkins",
-    date: "Tomorrow",
-    time: "9:00 AM - 10:00 AM",
-    location: "Downtown Gym",
-  },
-  {
-    id: "2",
-    sessionName: "Cardio Blast",
-    trainerName: "Ahmed Nour",
-    date: "Friday",
-    time: "7:00 AM - 8:00 AM",
-    location: "Online",
-  },
-  {
-    id: "3",
-    sessionName: "Flexibility & Core",
-    trainerName: "Lina Hassan",
-    date: "Saturday",
-    time: "11:00 AM - 12:00 PM",
-    location: "Maadi Sports Club",
-  },
-  {
-    id: "4",
-    sessionName: "Pilates",
-    trainerName: "Lina Hassan",
-    date: "Saturday",
-    time: "11:00 AM - 12:00 PM",
-    location: "Online",
-  },
-];
-
-export default function UpcomingSessions({
-  sessions,
-  onReschedule,
-  onViewDetails,
-}: UpcomingSessionsProps) {
-  const displaySessions = sessions.length > 0 ? sessions : mockSessions;
+  if (isLoading) return <p className="text-white px-10">Loading sessions...</p>;
 
   return (
     <div className="flex flex-col gap-6 px-4 sm:px-10">
@@ -72,18 +21,22 @@ export default function UpcomingSessions({
       </div>
 
       <div className="flex flex-col gap-4 sm:mt-4">
-        {displaySessions.map((session) => (
-          <SessionCard
-            key={session.id}
-            sessionName={session.sessionName}
-            trainerName={session.trainerName}
-            date={session.date}
-            time={session.time}
-            location={session.location}
-            onReschedule={() => onReschedule?.(session.id)}
-            onViewDetails={() => onViewDetails?.(session.id)}
-          />
-        ))}
+        {sessions.length === 0 ? (
+          <p className="text-(--gray-color) text-sm px-1">
+            No upcoming sessions.
+          </p>
+        ) : (
+          sessions.map((session) => (
+            <SessionCard
+              key={session.id}
+              sessionName={session.package_name}
+              trainerName={session.trainer_name}
+              date={session.date}
+              time={session.time}
+              location="—"
+            />
+          ))
+        )}
       </div>
     </div>
   );
