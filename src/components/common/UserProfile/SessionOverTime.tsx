@@ -25,9 +25,12 @@ const data = [
 export default function SessionsOverTime() {
   return (
     <div className="border border-primary rounded-xl p-5 sm:p-7">
-      <h2 className="text-lg sm:text-xl font-semibold text-white mb-6">
+      <h2 className="text-lg sm:text-xl font-semibold text-white mb-1">
         Sessions Over Time
       </h2>
+      <p className="text-xs text-(--gray-color) mb-6">
+        Sample data — live tracking coming soon
+      </p>
       <ResponsiveContainer width="100%" height={250}>
         <AreaChart
           data={data}

@@ -4,7 +4,9 @@ import SessionsOverTime from "../../components/common/UserProfile/SessionOverTim
 import { useProgressActivity } from "@/hooks/useProfileData";
 
 export default function ProgressActivity() {
-  const { data: progress } = useProgressActivity();
+  const { data: progress, isLoading } = useProgressActivity();
+  
+  if (isLoading) return <p className="text-white px-10">Loading...</p>;
 
   return (
     <div className="flex flex-col gap-6 px-4 sm:px-10">

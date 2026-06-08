@@ -25,4 +25,17 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("is_profile_complete");
+      window.location.href = "/auth/login";
+    }
+    return Promise.reject(error);
+  },
+);
+
 export default client;

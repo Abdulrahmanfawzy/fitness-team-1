@@ -46,7 +46,7 @@ export default function Verify() {
             Enter Verification Code
           </h2>
           <p className="text-(--gray-color) text-md font-semibold">
-            We sent a code to
+            We sent a code to{" "}
             <span className="text-(--white-color)">{maskEmail(email)}</span>
           </p>
         </div>

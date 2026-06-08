@@ -8,7 +8,6 @@ interface ProfileHeaderProps {
   nextSession: string;
   avatarUrl?: string;
   onAvatarClick?: () => void;
-  onEditProfile?: () => void;
 }
 
 const stats = (

@@ -8,8 +8,9 @@ import { infoSchema, type InfoFormData } from "@/lib/schemas/info.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const RADIO_FIELDS = [
   {
@@ -47,14 +48,15 @@ const NUMBER_FIELDS = [
 
 export default function Info() {
   const navigate = useNavigate();
+  const { setProfileComplete } = useAuth();
 
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<InfoFormData>({
-    resolver: zodResolver(infoSchema),
+  } = useForm<InfoFormData, unknown, InfoFormData>({
+    resolver: zodResolver(infoSchema) as Resolver<InfoFormData>,
     defaultValues: {
       gender: "",
       fitness_level: "",
@@ -67,9 +69,12 @@ export default function Info() {
     },
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationFn: saveFitnessProfile,
-    onSuccess: () => navigate("/"),
+    onSuccess: () => {
+      setProfileComplete();
+      navigate("/");
+    },
   });
 
   const onSubmit = (data: InfoFormData) =>
@@ -107,7 +112,8 @@ export default function Info() {
             error={errors[name]?.message}
             {...(name === "fitness_goals" && {
               onChangeTransform: (val) => [val],
-              valueTransform: (fieldVal, item) => fieldVal[0] === item,
+              valueTransform: (fieldVal, item) =>
+                (fieldVal as string[])[0] === item,
             })}
           />
         ))}
@@ -133,6 +139,12 @@ export default function Info() {
           type="submit"
           disabled={isPending}
         />
+
+        {error && (
+          <p className="text-red-400 text-sm text-center">
+            Something went wrong. Please try again.
+          </p>
+        )}
       </form>
     </AuthLayout>
   );

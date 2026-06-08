@@ -25,20 +25,23 @@ import WorkoutHistory from "@/pages/UserProfile/WorkoutHistory";
 import PaymentMethods from "@/pages/UserProfile/PaymentMethods";
 import BillingHistory from "@/pages/UserProfile/BillingHistory";
 import SecurityPassword from "@/pages/UserProfile/SecurityPassword";
+import InfoRoute from "./InfoRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
+    errorElement: (
+      <div className="min-h-screen bg-[#111] flex items-center justify-center">
+        <p className="text-white">Something went wrong. Please refresh.</p>
+      </div>
+    ),
     children: [
-      // Public routes
       { index: true, element: <Home /> },
       { path: "trainers", element: <TrainingPage /> },
       { path: "trainer/:id", element: <TrainerProfile /> },
       { path: "packages", element: <PackagePage /> },
       { path: "contact-us", element: <ContactUs /> },
-
-      // Protected
       {
         path: "booking",
         element: <PrivateRoute />,
@@ -63,77 +66,9 @@ export const router = createBrowserRouter([
             children: [
               { path: "overview", element: <ProfileOverview /> },
               { path: "personal-info", element: <PersonalInfoForm /> },
-              {
-                path: "sessions",
-                element: (
-                  <UpcomingSessions
-                    sessions={[
-                      {
-                        id: "1",
-                        sessionName: "Strength Training",
-                        trainerName: "Sarah Jenkins",
-                        date: "Tomorrow",
-                        time: "9:00 AM - 10:00 AM",
-                        location: "Downtown Gym",
-                      },
-                      {
-                        id: "2",
-                        sessionName: "Cardio Blast",
-                        trainerName: "Ahmed Nour",
-                        date: "Friday",
-                        time: "7:00 AM - 8:00 AM",
-                        location: "Online",
-                      },
-                      {
-                        id: "3",
-                        sessionName: "Flexibility & Core",
-                        trainerName: "Lina Hassan",
-                        date: "Saturday",
-                        time: "11:00 AM - 12:00 PM",
-                        location: "Maadi Sports Club",
-                      },
-                      {
-                        id: "4",
-                        sessionName: "Pilates",
-                        trainerName: "Lina Hassan",
-                        date: "Saturday",
-                        time: "11:00 AM - 12:00 PM",
-                        location: "Online",
-                      },
-                    ]}
-                  />
-                ),
-              },
-              {
-                path: "packages",
-                element: (
-                  <MyPackages
-                    pack={{
-                      name: "Single Pack",
-                      status: "Active",
-                      expiryDate: "May 31, 2026",
-                      sessionsRemaining: 12,
-                      totalSessions: 20,
-                      includes: [
-                        "1-on-1 Personal Training",
-                        "Weekly Check-ins",
-                        "Customized Nutrition Plan",
-                        "Access to Pro App Features",
-                      ],
-                    }}
-                  />
-                ),
-              },
-              {
-                path: "progress",
-                element: (
-                  <ProgressActivity
-                    sessionComplete="12 Weeks"
-                    activePackage={48}
-                    nextSession={3.2}
-                  />
-                ),
-              },
+              { path: "sessions", element: <UpcomingSessions /> },
+              { path: "packages", element: <MyPackages /> },
+              { path: "progress", element: <ProgressActivity /> },
               { path: "workout-history", element: <WorkoutHistory /> },
               { path: "payment", element: <PaymentMethods /> },
               { path: "billing", element: <BillingHistory /> },
@@ -145,23 +80,28 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Auth routes
+  // Public auth routes
   {
     path: "/auth",
     element: <PublicRoute />,
     children: [
       { path: "signup", element: <SignUp /> },
       { path: "login", element: <Login /> },
-      { path: "verify", element: <Verify /> },
       { path: "forgot-password", element: <ForgotPassword /> },
       { path: "reset-password", element: <ResetPass /> },
     ],
   },
 
-  // Protected 
+  {
+    path: "/auth",
+    element: <PrivateRoute />,
+    children: [{ path: "verify", element: <Verify /> }],
+  },
+
+  // Info — onboarding
   {
     path: "info",
-    element: <PrivateRoute />,
+    element: <InfoRoute />,
     children: [{ path: "", element: <Info /> }],
   },
 ]);

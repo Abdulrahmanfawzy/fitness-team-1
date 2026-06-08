@@ -11,13 +11,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { LockKeyholeIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "@/lib/api/Auth/auth.api";
+import { useEffect } from "react";
 
 export default function ResetPass() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const email = location.state?.email as string;
-  const code = location.state?.code as string;
+const email = location.state?.email as string | undefined;
+const code = location.state?.code as string | undefined;
 
   const {
     register,
@@ -33,6 +34,14 @@ export default function ResetPass() {
       navigate("/auth/login");
     },
   });
+
+  useEffect(() => {
+    if (!email || !code) {
+      navigate("/auth/forgot-password", { replace: true });
+    }
+  }, [email, code, navigate]);
+
+  if (!email || !code) return null; 
 
   const onSubmit = (data: resetPasswordFormData) => {
     mutate({

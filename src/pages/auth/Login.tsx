@@ -10,6 +10,7 @@ import googleIcon from "@/assets/icons/google.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/lib/api/Auth/auth.api";
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -77,10 +78,11 @@ export default function Login() {
 
           {error && (
             <p className="text-red-400 text-sm text-center">
-              Invalid email or password. Please try again.
+              {axios.isAxiosError(error) && error.response?.status === 401
+                ? "Invalid email or password."
+                : "Something went wrong. Please try again."}
             </p>
           )}
-
           <Link
             to="/auth/forgot-password"
             className="text-(--main-color) hover:opacity-80 transition text-end font-semibold">

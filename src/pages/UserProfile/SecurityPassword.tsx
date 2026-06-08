@@ -6,6 +6,8 @@ import {
   changePasswordSchema,
   type ChangePasswordFormData,
 } from "@/lib/schemas/changePassword.schema";
+import { changePassword } from "@/lib/api/profile.api";
+import { useMutation } from "@tanstack/react-query";
 
 const fields = [
   {
@@ -30,13 +32,19 @@ export default function SecurityPassword() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty },
   } = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
   });
 
-  const onSubmit = () => {
-    reset();
+  
+  const { mutate, isPending, error, isSuccess } = useMutation({
+    mutationFn: changePassword,
+    onSuccess: () => reset(),
+  });
+  
+  const onSubmit = (data: ChangePasswordFormData) => {
+    mutate(data);
   };
 
   return (
@@ -70,7 +78,7 @@ export default function SecurityPassword() {
                 label={label}
                 placeholder={placeholder}
                 type="password"
-                register={register("password")}
+                register={register(key)}
                 error={errors[key]}
                 icon={<LockKeyholeIcon size={16} />}
               />
@@ -81,10 +89,21 @@ export default function SecurityPassword() {
 
           <button
             type="submit"
-            disabled={!isDirty || isSubmitting}
+            disabled={!isDirty || isPending}
             className="w-full max-w-lg h-13 text-base font-semibold text-white bg-primary rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 shadow-lg shadow-primary/25 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-            {isSubmitting ? "Updating..." : "Update Password"}
+            {isPending ? "Updating..." : "Update Password"}
           </button>
+
+          {error && (
+            <p className="text-red-400 text-sm">
+              Failed to update password. Please check your current password.
+            </p>
+          )}
+          {isSuccess && (
+            <p className="text-green-400 text-sm">
+              Password updated successfully.
+            </p>
+          )}
         </form>
       </div>
     </div>

@@ -9,16 +9,27 @@ export interface AuthUser {
   about_me: string | null;
   fitness_goals: string | null;
   preferred_training: string | null;
-  // fitness profile fields from Info page
-  gender: string | null;
-  age: number | null;
-  height_cm: number | null;
-  weight_kg: number | null;
-  fitness_level: string | null;
-  workout_location: string | null;
-  preferred_training_days: string | null;
-  // invoices
+
+  gender?: string | null;
+  age?: number | null;
+  height_cm?: number | null;
+  weight_kg?: number | null;
+  fitness_level?: string | null;
+  workout_location?: string | null;
+  preferred_training_days?: string | null;
   invoices: Invoice[];
+}
+
+interface RawProfileResponse {
+  0: Invoice[];
+  id: number;
+  name: string;
+  email: string;
+  membership_date: string | null;
+  profile_image: string | null;
+  about_me: string | null;
+  fitness_goals: string | null;
+  preferred_training: string | null;
 }
 
 export interface Invoice {
@@ -85,7 +96,7 @@ export const logout = async (): Promise<void> => {
 };
 
 export const verifyOtp = async (payload: VerifyOtpPayload): Promise<void> => {
-  await client.post("/verify-otp", null, { params: payload });
+  await client.post("/verify-otp", payload);
 };
 
 export const forgotPassword = async (
@@ -95,11 +106,12 @@ export const forgotPassword = async (
 };
 
 export const getProfile = async (): Promise<{ user: AuthUser }> => {
-  const { data } = await client.get("/profile");
-  const { 0: invoices, ...rest } = data;
+  const { data } = await client.get<RawProfileResponse>("/profile");
+  const { 0: invoices, ...userFields } = data;
+
   return {
     user: {
-      ...rest,
+      ...userFields,
       invoices: invoices ?? [],
     },
   };
@@ -108,10 +120,15 @@ export const getProfile = async (): Promise<{ user: AuthUser }> => {
 export const resetPassword = async (
   payload: ResetPasswordPayload,
 ): Promise<void> => {
-  await client.post("/reset-password", null, { params: payload });
+  await client.post("/reset-password", payload);
 };
 
 export const getGoogleRedirectUrl = async (): Promise<{ url: string }> => {
   const { data } = await client.get("/auth/google/redirect");
   return data;
+};
+
+export const getInvoices = async (): Promise<Invoice[]> => {
+  const { data } = await client.get("/payments-history");
+  return data.data ?? []; // Laravel pagination wraps items in .data
 };

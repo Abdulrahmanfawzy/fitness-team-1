@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import {
   useGetFilter,
   useGetSearch,
-  useGetTerainers,
-} from "@/hooks/useGetTerainers";
+  useGetTrainers,
+} from "@/hooks/useGetTrainers";
 import { useMemo, useState } from "react";
 import NotFoundSearch from "../NotFound/NotFoundSearch";
 import { useSearchParams } from "react-router-dom";
@@ -14,7 +14,7 @@ import { SkeletonCard } from "./Loading/SkeletonCard";
 const TrainingCart = () => {
   const { durationId, specializationId, enabled } = useFilterContext()!;
   const [Load, SetLoad] = useState(3);
-  const { data: trainers, isLoading } = useGetTerainers();
+  const { data: trainers, isLoading } = useGetTrainers();
   const { data: searchResults, isLoading: searchLoading } = useGetSearch();
   const { data: filterResults, isLoading: filterLoading } = useGetFilter(
     durationId,

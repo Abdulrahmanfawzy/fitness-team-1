@@ -8,7 +8,7 @@ export type TrainerResponse = {
   rating: string;
   total_reviews: number;
   specializations: string[];
-  trainer_id?: number;
+  price_per_session: number;
 };
 
 export type FilterTrainer = {

@@ -130,10 +130,16 @@ export default function SignUp() {
         </div>
         <button
           type="button"
+          aria-label="Sign in with Google"
           className="w-full h-12 rounded-lg bg-(--darkGrey-color) mb-6 cursor-pointer flex items-center justify-center hover:opacity-80 transition"
-          onClick={handleGoogleLogin}
-        >
-          <img src={googleIcon} width={20} height={20} />
+          onClick={handleGoogleLogin}>
+          <img
+            src={googleIcon}
+            width={20}
+            height={20}
+            alt="Google Icon"
+            aria-hidden="true"
+          />
         </button>
       </div>
     </AuthLayout>

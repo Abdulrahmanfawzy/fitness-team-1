@@ -1,10 +1,8 @@
 import SessionCard from "@/components/common/UserProfile/SessionCard";
 import { useSessions } from "@/hooks/useProfileData";
-import { Link } from "react-router-dom";
 
 export default function UpcomingSessions() {
   const { data: sessions = [], isLoading } = useSessions();
-
   if (isLoading) return <p className="text-white px-10">Loading sessions...</p>;
 
   return (
@@ -13,11 +11,9 @@ export default function UpcomingSessions() {
         <h2 className="text-2xl sm:text-4xl font-bold text-white">
           Upcoming Sessions
         </h2>
-        <Link
-          to="/sessions/past"
-          className="text-sm sm:text-2xl font-semibold underline text-primary hover:text-primary/80 transition-colors duration-200 shrink-0">
+        <span className="text-sm sm:text-2xl font-semibold text-(--gray-color) shrink-0 cursor-not-allowed opacity-50">
           View Past Sessions
-        </Link>
+        </span>
       </div>
 
       <div className="flex flex-col gap-4 sm:mt-4">

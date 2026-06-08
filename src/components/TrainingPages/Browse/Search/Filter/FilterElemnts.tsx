@@ -7,11 +7,12 @@ import {
 import { Funnel } from "lucide-react";
 import Button from "@/components/common/Button";
 import { useFilterContext } from "@/context/FilterContext";
-import { useGetFilterValues } from "@/hooks/useGetTerainers";
+import { useGetFilterValues } from "@/hooks/useGetTrainers";
 
 const FilterElemnts = () => {
   const [open, setOpen] = useState(false);
-  const { specializationId, setSpecializationId, setEnabled } = useFilterContext()!;
+  const { specializationId, setSpecializationId, setEnabled } =
+    useFilterContext()!;
 
   const handelFilter = useCallback(() => {
     setEnabled(true);
@@ -37,8 +38,7 @@ const FilterElemnts = () => {
           md:w-[500px] md:left-0 w-screen sm:max-w-[500px]
           bg-[#0f0f0f] border-[#222] p-0 rounded-none sm:rounded-md
         "
-        style={{ position: undefined }}
-      >
+        style={{ position: undefined }}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#222]">
           <div className="w-10 md:w-12"></div>
 
@@ -46,8 +46,7 @@ const FilterElemnts = () => {
 
           <span
             className="text-accent cursor-pointer text-sm font-medium w-10 md:w-12 text-right"
-            onClick={() => setOpen(false)}
-          >
+            onClick={() => setOpen(false)}>
             Close
           </span>
         </div>
@@ -64,8 +63,7 @@ const FilterElemnts = () => {
                 specializationId === specialization.id
                   ? "text-whiter bg-primary"
                   : "text-accent-foreground hover:text-accent"
-              }`}
-            >
+              }`}>
               <span>{specialization.name}</span>
               {specializationId === specialization.id && (
                 <span>{specialization.name} ✓</span>

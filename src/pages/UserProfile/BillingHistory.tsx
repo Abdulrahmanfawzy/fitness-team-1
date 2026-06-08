@@ -1,5 +1,5 @@
 import { Download } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useInvoices } from "@/hooks/useProfileData";
 
 const statusStyles: Record<string, string> = {
   Paid: "bg-green-500/15 text-green-400",
@@ -8,8 +8,8 @@ const statusStyles: Record<string, string> = {
 };
 
 export default function BillingHistory() {
-  const { user } = useAuth();
-  const invoices = user?.invoices ?? [];
+  const { data: invoices = [], isLoading } = useInvoices();
+  if (isLoading) return <p className="text-white px-10">Loading...</p>;
 
   return (
     <div className="flex flex-col gap-6 px-4 sm:px-10">
@@ -60,7 +60,10 @@ export default function BillingHistory() {
                     }`}>
                     {inv.status}
                   </span>
-                  <button className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary/20 flex items-center justify-center cursor-pointer">
+                  <button
+                    disabled
+                    title="Download coming soon"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary/20 flex items-center justify-center cursor-pointer">
                     <Download size={14} className="text-primary" />
                   </button>
                 </div>

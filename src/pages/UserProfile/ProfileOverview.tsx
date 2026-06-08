@@ -65,9 +65,6 @@ export default function ProfileOverview() {
         
         avatarUrl={url ?? user?.profile_image ?? undefined}
         onAvatarClick={() => uploadInp.current?.click()}
-        onEditProfile={() => {
-          if (import.meta.env.DEV) console.warn("edit profile");
-        }}
       />
 
       <input

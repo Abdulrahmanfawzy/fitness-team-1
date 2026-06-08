@@ -1,10 +1,12 @@
 export interface PackageProps {
+  trainerPackageId: number;
   title: string;
   price: number;
   sessions: string;
   features: string[];
   isRecommended?: boolean;
 }
+
 export interface RawPackageFromAPI {
   id: number;
   title: string;
@@ -13,6 +15,7 @@ export interface RawPackageFromAPI {
   duration_days: number;
   features: string[];
 }
+
 export interface PackageType {
   id: number;
   title: string;

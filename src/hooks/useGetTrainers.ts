@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { getFilterResults, getFilterValues, getTerainers } from "@/lib/api/triners/TrainersApi";
+import {
+  getFilterResults,
+  getFilterValues,
+  getTrainers,
+} from "@/lib/api/triners/TrainersApi";
 import { getSearchResults } from "@/lib/api/triners/TrainersApi";
 import { useSearchParams } from "react-router-dom";
 
 // All Trainers
-export const useGetTerainers = () => {
-  const data = useQuery({ queryKey: ["getTerainers"], queryFn: getTerainers });
-  return data;
+export const useGetTrainers = () => {
+  return useQuery({ queryKey: ["trainers"], queryFn: getTrainers });
 };
 
 // Search
@@ -30,15 +33,13 @@ export const useGetFilter = (
   return useQuery({
     queryKey: ["getFilter", durationId, specializationId],
     queryFn: () => getFilterResults(durationId, specializationId),
-    enabled: enabled && !!durationId && !!specializationId,
+    enabled: enabled,
   });
 };
-
 
 export const useGetFilterValues = () => {
   return useQuery({
-    queryKey: ["getFilterValues",],
+    queryKey: ["getFilterValues"],
     queryFn: () => getFilterValues(),
   });
 };
-

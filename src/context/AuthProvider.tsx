@@ -7,13 +7,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isProfileComplete, setIsProfileComplete] = useState(false);
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(() => {
+    return !!localStorage.getItem("token");
+  });
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedProfileComplete = localStorage.getItem("is_profile_complete");
     if (!storedToken) {
-      setLoading(false);
       return;
     }
     getProfile()
@@ -62,7 +62,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  if (loading) return null;
+  const setProfileComplete = () => {
+    setIsProfileComplete(true);
+    localStorage.setItem("is_profile_complete", "1");
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -73,6 +77,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         updateUser,
+        setProfileComplete,
+        isLoading: loading, 
       }}>
       {children}
     </AuthContext.Provider>

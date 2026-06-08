@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const PublicRoute = () => {
   const { isLoggedIn } = useAuth();
-  return !isLoggedIn ? <Outlet /> : <Navigate to="/info" />;
+  return !isLoggedIn ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default PublicRoute;

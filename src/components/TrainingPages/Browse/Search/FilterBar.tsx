@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import FilterElemnts from "./Filter/FilterElemnts";
 import SearchInp from "./SearchInp/SearchInp";
 import { useFilterContext } from "@/context/FilterContext";
-import { useGetFilterValues } from "@/hooks/useGetTerainers";
+import { useGetFilterValues } from "@/hooks/useGetTrainers";
 
 const FilterBar = () => {
   const {
@@ -54,15 +54,14 @@ const FilterBar = () => {
             {enabled && specializationId > 0 && (
               <Button
                 className="bg-[#B6B6B54D] min-w-[170px] flex items-center gap-2 px-3 cursor-pointer"
-                onClick={() => setEnabled(false)}
-              >
+                onClick={() => setEnabled(false)}>
                 <span className="w-2 h-2 rounded-full bg-red-600 shrink-0 inline-block" />
                 <p> {specializationValue}</p>
                 <X size={16} />
               </Button>
             )}
           </div>
-          {enabled  && (
+          {enabled && (
             <p className="cursor-pointer" onClick={handelClear}>
               Clear Filter
             </p>

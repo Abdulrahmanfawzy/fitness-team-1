@@ -3,6 +3,7 @@ import { HiOutlineCheckCircle } from "react-icons/hi2";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useBookingAuth } from "@/context/useBookingAuth";
+import { useBookingContext } from "@/hooks/useBookingContext";
 
 const PackageCard = ({
   title,
@@ -10,14 +11,20 @@ const PackageCard = ({
   sessions,
   features,
   isRecommended,
+  trainerPackageId,
 }: PackageProps) => {
   const { isLoggedIn } = useAuth();
   const { openSheet } = useBookingAuth();
+  const { setTrainerPackageId } = useBookingContext();
   const navigate = useNavigate();
 
   const handleBook = () => {
-    if (isLoggedIn) navigate("/booking");
-    else openSheet();
+    if (!isLoggedIn) {
+      openSheet();
+      return;
+    }
+    setTrainerPackageId(trainerPackageId);
+    navigate("/booking");
   };
 
   return (
@@ -32,21 +39,25 @@ const PackageCard = ({
           ✦ Recommended
         </div>
       )}
+
       <h3 className="text-lg sm:text-xl font-bold text-white mb-4">{title}</h3>
+
       <div className="mb-2">
         <span className="text-2xl sm:text-3xl font-bold text-red-500">
-          {price}
+          {price} EGP
         </span>
         <span className="text-zinc-400 text-sm ml-1">/ package</span>
       </div>
+
       <div className="flex justify-between text-zinc-500 text-xs font-medium border-b border-zinc-800 pb-4 mb-6">
         <span>60 MIN</span>
-        <span>{sessions}</span>
+        <span>{sessions} sessions</span>
       </div>
+
       <ul className="grow space-y-3 sm:space-y-4 mb-8">
-        {features.map((feature, index) => (
+        {features.map((feature) => (
           <li
-            key={index}
+            key={feature}
             className="flex items-center gap-3 text-zinc-300 text-sm">
             <span className="text-red-500 shrink-0">
               <HiOutlineCheckCircle size={20} />
@@ -55,6 +66,7 @@ const PackageCard = ({
           </li>
         ))}
       </ul>
+
       <button
         className={`w-full py-3 rounded-lg font-bold transition-all cursor-pointer text-sm sm:text-base ${
           isRecommended

@@ -7,6 +7,12 @@ import {
   type UpdateProfilePayload,
 } from "@/lib/api/profile.api";
 import { useMutation } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  personalInfoSchema,
+  type PersonalInfoFormData,
+} from "@/lib/schemas/personalInfo.schema";
+import { toast } from "sonner";
 
 export default function PersonalInfoForm() {
   const { user, updateUser } = useAuth();
@@ -15,8 +21,9 @@ export default function PersonalInfoForm() {
     register,
     handleSubmit,
     reset,
-    formState: { isDirty, isSubmitting },
-  } = useForm<UpdateProfilePayload>({
+    formState: { errors, isDirty, isSubmitting },
+  } = useForm<PersonalInfoFormData>({
+    resolver: zodResolver(personalInfoSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -26,7 +33,6 @@ export default function PersonalInfoForm() {
     },
   });
 
-  // Pre-fill form once user is loaded from context
   useEffect(() => {
     if (!user) return;
     reset({
@@ -40,15 +46,19 @@ export default function PersonalInfoForm() {
 
   const { mutate: saveProfile } = useMutation({
     mutationFn: updateUserProfile,
-    onSuccess: (_, payload) => {
+    onSuccess: (response) => {
       updateUser({
-        name: payload.name,
-        email: payload.email,
-        about_me: payload.about_me ?? null,
-        fitness_goals: payload.fitness_goals ?? null,
-        preferred_training: payload.preferred_training ?? null,
+        name: response.user.name,
+        about_me: response.user.about_me,
+        fitness_goals: response.user.fitness_goals,
+        preferred_training: response.user.preferred_training,
+        profile_image: response.user.profile_image ?? undefined,
       });
+      toast.success("Profile updated successfully!");
     },
+    onError: (error) => {
+      toast.error("Failed to update profile. Please try again.");
+    }
   });
 
   const onSubmit = (data: UpdateProfilePayload) => {
@@ -70,21 +80,27 @@ export default function PersonalInfoForm() {
               Full Name
             </label>
             <Input
-              {...register("name", { required: true })}
+              {...register("name")}
               placeholder="Full Name"
               className="bg-(--lightGrey-color) border-[#3A3A3A] h-11 text-white placeholder:text-(--gray-color)"
             />
+            <p className="text-sm text-red-500 mt-1">
+              {errors.name && errors.name.message}
+            </p>
           </div>
           <div className="flex flex-col gap-2 flex-1">
             <label className="text-md font-semibold text-(--gray-color)">
               Email Address
             </label>
             <Input
-              {...register("email", { required: true })}
+              {...register("email")}
               type="email"
               placeholder="Email Address"
               className="bg-(--lightGrey-color) border-[#3A3A3A] h-11 text-white placeholder:text-(--gray-color)"
             />
+            <p className="text-sm text-red-500 mt-1">
+              {errors.email && errors.email.message}
+            </p>
           </div>
         </div>
 
@@ -97,6 +113,9 @@ export default function PersonalInfoForm() {
             placeholder="Tell us about yourself"
             className="bg-(--lightGrey-color) border-[#3A3A3A] h-11 text-white placeholder:text-(--gray-color)"
           />
+          <p className="text-sm text-red-500 mt-1">
+            {errors.about_me && errors.about_me.message}
+          </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
@@ -109,6 +128,9 @@ export default function PersonalInfoForm() {
               placeholder="e.g. Build Muscle"
               className="bg-(--lightGrey-color) border-[#3A3A3A] h-11 text-white placeholder:text-(--gray-color)"
             />
+            <p className="text-sm text-red-500 mt-1">
+              {errors.fitness_goals && errors.fitness_goals.message}
+            </p>
           </div>
           <div className="flex flex-col gap-2 flex-1">
             <label className="text-md font-semibold text-(--gray-color)">
@@ -119,6 +141,9 @@ export default function PersonalInfoForm() {
               placeholder="e.g. Both (Online & Gym)"
               className="bg-(--lightGrey-color) border-[#3A3A3A] h-11 text-white placeholder:text-(--gray-color)"
             />
+            <p className="text-sm text-red-500 mt-1">
+              {errors.preferred_training && errors.preferred_training.message}
+            </p>
           </div>
         </div>
 

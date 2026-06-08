@@ -21,6 +21,18 @@ export interface FitnessProfilePayload {
   preferred_training_days: string;
 }
 
+export interface ChangePasswordPayload {
+  current_password: string;
+  password: string;
+  password_confirmation: string;
+}
+
+export interface AddPaymentMethodPayload {
+  card_number: string;
+  card_holder: string;
+  expiry_date: string;
+}
+
 // ─── Response Types ───────────────────────────────────────────────────────────
 
 export interface Session {
@@ -62,6 +74,20 @@ export interface PaymentMethod {
   is_default: boolean;
 }
 
+export interface UpdateProfileResponse {
+  success: boolean;
+  message: string;
+  user: {
+    id: number;
+    name: string;
+    about_me: string | null;
+    fitness_goals: string | null;
+    preferred_training: string | null;
+    profile_image: string | null;
+  };
+}
+
+
 // ─── API Calls ────────────────────────────────────────────────────────────────
 
 export const saveFitnessProfile = async (
@@ -72,12 +98,13 @@ export const saveFitnessProfile = async (
 
 export const updateUserProfile = async (
   payload: UpdateProfilePayload,
-): Promise<void> => {
-  await client.put("/profile", payload);
+): Promise<UpdateProfileResponse> => {
+  const { data } = await client.put("/profile", payload);
+  return data;
 };
 
 export const getSessions = async (): Promise<Session[]> => {
-  const { data } = await client.get("/profile/session");
+  const { data } = await client.get("/profile/sessions");
   return data.sessions;
 };
 
@@ -92,7 +119,7 @@ export const getProgressActivity = async (): Promise<ProgressActivity> => {
 };
 
 export const getWorkoutHistory = async (): Promise<WorkoutHistory[]> => {
-  const { data } = await client.get("/profile/workoutHistory");
+  const { data } = await client.get("/profile/workout-history");
   return data.history;
 };
 
@@ -113,5 +140,23 @@ export const uploadProfileImage = async (
 };
 
 export const removeProfileImage = async (): Promise<void> => {
-  await client.delete("/profile/remove-image");
+  await client.delete("/landing/removeImage");
 };
+
+export const changePassword = async (
+  payload: ChangePasswordPayload,
+): Promise<void> => {
+  await client.post("/profile/change-password", payload);
+};
+
+
+// export const addPaymentMethod = async (
+//   payload: AddPaymentMethodPayload,
+// ): Promise<PaymentMethod> => {
+//   const { data } = await client.post("/profile/payment-methods", payload);
+//   return data;
+// };
+
+// export const deletePaymentMethod = async (id: number): Promise<void> => {
+//   await client.delete(`/cards/${id}`);
+// };

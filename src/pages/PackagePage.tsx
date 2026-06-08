@@ -8,7 +8,7 @@ import client from "@/lib/api/client";
 
 const PackagePage = () => {
   const { data } = useQuery({
-    queryKey: ["packages"],
+    queryKey: ["public-packages"],
     queryFn: async () => {
       const { data } = await client.get("/packages");
       const packages = data.data || [];
