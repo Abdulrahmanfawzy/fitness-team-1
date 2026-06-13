@@ -1,9 +1,7 @@
 import { FaCheck, FaLocationDot, FaStar } from "react-icons/fa6";
 import { BiMoney } from "react-icons/bi";
 import { TbStar } from "react-icons/tb";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { useBookingAuth } from "@/context/useBookingAuth";
+
 import type { TrainerDetails } from "@/lib/api/triners/TrainersApi";
 
 const FALLBACK_AVATAR = `https://ui-avatars.com/api/?background=363636&color=fff&size=400&font-size=0.35&name=`;
@@ -13,14 +11,8 @@ interface TrainerInfoProps {
 }
 
 export default function TrainerInfo({ trainer }: TrainerInfoProps) {
-  const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
-  const { openSheet } = useBookingAuth();
 
-  const handleBook = () => {
-    if (isLoggedIn) navigate("/booking");
-    else openSheet();
-  };
+
 
   const minPrice = Math.min(...trainer.packages.map((p) => p.price));
   const isVerified = trainer.packages.length > 0;
@@ -146,12 +138,6 @@ export default function TrainerInfo({ trainer }: TrainerInfoProps) {
               </div>
             </div>
           </div>
-
-          <button
-            onClick={handleBook}
-            className="w-full sm:w-auto sm:min-w-55 py-3.5 px-8 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-[15px] font-bold tracking-[0.02em] rounded-xl transition-colors duration-150 cursor-pointer">
-            Book a Session
-          </button>
         </div>
       </div>
     </div>

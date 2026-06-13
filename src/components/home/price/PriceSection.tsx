@@ -2,19 +2,15 @@ import PricePackages from "./PricePackages";
 import PriceSectionIntro from "./PriceSectionIntro";
 
 export default function PriceSection() {
-  const sectionBackgroundStyle = {
-    backgroundColor: "var(--dark-mode-surfaces-bg-cards-bg-primary, #121212)",
-    backgroundBlendMode: "overlay" as const,
-    backgroundImage:
-      "linear-gradient(180deg, rgba(255, 77, 77, 0.8) 0%, #838383 100%)",
-  };
-
   return (
-    <section
-      style={sectionBackgroundStyle}
-      className="w-full px-4 py-16 md:py-20"
-    >
-      <div className="container mx-auto flex flex-col items-center text-center">
+    <section className="relative w-full overflow-hidden bg-[#0d0d0d] px-4 py-16 md:py-24">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0a0a0a] to-transparent" />
+
+      <div className="pointer-events-none absolute inset-0 flex items-start justify-center pt-10">
+        <div className="h-100 w-150 rounded-full bg-primary/8 blur-[100px]" />
+      </div>
+
+      <div className="relative container mx-auto flex flex-col items-center text-center">
         <PriceSectionIntro />
         <PricePackages />
       </div>

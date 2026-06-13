@@ -10,7 +10,7 @@ export default function HeaderActions() {
   const { openSheet } = useBookingAuth();
 
   const handleBook = () => {
-    if (isLoggedIn) navigate("/booking");
+    if (isLoggedIn) navigate("/trainers");
     else openSheet();
   };
 

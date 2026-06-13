@@ -1,1 +1,1 @@
-export type PaymentMethod = "card" | "paypal" | "vodafone";
+export type PaymentMethod = "card" | "paypal";

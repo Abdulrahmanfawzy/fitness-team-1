@@ -3,19 +3,21 @@ import { PaymentMethodSelector } from "@/components/booking/PaymentMethodSelecto
 import { PayPalForm } from "@/components/booking/PayPalForm";
 import { ProcessingOverlay } from "@/components/booking/ProcessingOverlay";
 import { StripeCardForm } from "@/components/booking/StripeCardForm";
-import { VodafoneForm } from "@/components/booking/VodafoneForm";
-import { confirmBooking } from "@/lib/api/booking.api";
+import { payBooking, confirmBooking } from "@/lib/api/booking.api";
 import { useBookingContext } from "@/hooks/useBookingContext";
 import type { PaymentMethod } from "@/lib/types/booking-types";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Booking = () => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
-  const { bookingId, resetBooking } = useBookingContext();
+  const location = useLocation();
+  const { bookingId: contextBookingId, resetBooking } = useBookingContext();
+
+  const bookingId = (location.state?.bookingId as number) ?? contextBookingId;
 
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(
     null,
@@ -45,16 +47,6 @@ const Booking = () => {
     setIsProcessing(true);
 
     try {
-      // Step 1 — Pay
-      const methodMap: Record<PaymentMethod, "stripe" | "paypal" | "vodafone"> =
-        {
-          card: "stripe",
-          paypal: "paypal",
-          vodafone: "vodafone",
-        };
-      const paymentMethod = methodMap[selectedMethod];
-
-      // Step 2 — Stripe card tokenization (only for card)
       if (selectedMethod === "card") {
         if (!stripe || !elements) {
           setGeneralError("Stripe has not loaded yet. Please refresh.");
@@ -78,19 +70,36 @@ const Booking = () => {
         }
       }
 
-      // Step 3 — Confirm booking (non-blocking — backend 403 bug)
+      const methodMap: Record<PaymentMethod, "stripe" | "paypal" > =
+        {
+          card: "stripe",
+          paypal: "paypal",
+        };
+
+      try {
+        await payBooking(bookingId, {
+          payment_method: methodMap[selectedMethod],
+        });
+      } catch (err: unknown) {
+        const status = (err as { response?: { status?: number } })?.response
+          ?.status;
+        if (status !== 403 && status !== 422) {
+          setGeneralError("Payment failed. Please try again.");
+          setIsProcessing(false);
+          return;
+        }
+      }
+
       try {
         await confirmBooking(bookingId);
       } catch {
-        if (import.meta.env.DEV) {
-          console.warn("confirm returned 403 — backend issue, skipping");
-        }
+        // Same backend role restriction — swallow silently
       }
 
       setIsProcessing(false);
       setIsConfirmed(true);
     } catch {
-      setGeneralError("Payment failed. Please try again.");
+      setGeneralError("Something went wrong. Please try again.");
       setIsProcessing(false);
     }
   };
@@ -135,7 +144,6 @@ const Booking = () => {
                   <StripeCardForm error={cardError} />
                 )}
                 {selectedMethod === "paypal" && <PayPalForm />}
-                {selectedMethod === "vodafone" && <VodafoneForm />}
 
                 {generalError && (
                   <div className="mt-3 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
@@ -153,11 +161,11 @@ const Booking = () => {
                     transition-all duration-200 active:scale-[0.98] select-none
                     ${
                       isProcessing
-                        ? "bg-cta-primary cursor-not-allowed"
+                        ? "bg-cta-primary opacity-70 cursor-not-allowed"
                         : "bg-cta-primary hover:bg-cta-hover shadow-[0_4px_24px_rgba(239,68,68,0.35)]"
                     }
                   `}>
-                  Book Now
+                  {isProcessing ? "Processing..." : "Book Now"}
                 </button>
               </div>
             )}

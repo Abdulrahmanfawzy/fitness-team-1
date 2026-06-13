@@ -20,11 +20,13 @@ export default function SessionCard({
   onReschedule,
   onViewDetails,
 }: SessionCardProps) {
+  const initial = trainerName?.charAt(0) ?? "?";
+
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border border-(--gray-color) rounded-xl p-4 sm:p-5 gap-4">
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 sm:w-15 sm:h-15 rounded-full bg-raised flex items-center justify-center text-(--gray-color) text-lg font-semibold shrink-0">
-          {trainerName.charAt(0)}
+          {initial}
         </div>
 
         <div className="flex flex-col gap-1">
@@ -32,7 +34,7 @@ export default function SessionCard({
             {sessionName}
           </span>
           <span className="text-sm text-(--gray-color)">
-            with {trainerName}
+            with {trainerName ?? "—"}
           </span>
           <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-(--gray-color)">
             <span className="flex items-center gap-1">

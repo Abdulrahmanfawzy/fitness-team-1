@@ -1,5 +1,4 @@
 import { createContext } from "react";
-
 interface BookingContextType {
   trainerId: number | null;
   trainerPackageId: number | null;
@@ -11,7 +10,6 @@ interface BookingContextType {
   packageTitle: string | null;
   setBookingSelection: (data: {
     trainerId: number;
-    trainerPackageId: number;
     selectedDate: string;
     selectedTime: string;
   }) => void;
@@ -21,8 +19,8 @@ interface BookingContextType {
     trainerName: string;
     packageTitle: string;
   }) => void;
-  resetBooking: () => void;
   setTrainerPackageId: (id: number) => void;
+  resetBooking: () => void;
 }
 
 export const BookingContext = createContext<BookingContextType | null>(null);

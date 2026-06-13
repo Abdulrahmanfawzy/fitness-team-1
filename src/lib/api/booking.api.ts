@@ -37,14 +37,19 @@ export interface BookingScheduleResponse {
   expires_at: string;
 }
 
-
 export interface PayBookingPayload {
   payment_method: "paypal" | "stripe" | "vodafone";
 }
 
+export interface AvailabilitySlot {
+  start: string; // "HH:MM:SS"
+  end: string; // "HH:MM:SS"
+}
+
 export interface AvailabilityResponse {
   date: string;
-  available_slots: string[];
+  trainer_id: number;
+  slots: AvailabilitySlot[];
 }
 
 export interface ScheduleDay {
@@ -66,6 +71,7 @@ export const getTrainerSchedule = async (
   return data;
 };
 
+// Backend expects date in the request BODY (not query params)
 export const getTrainerAvailability = async (
   trainerId: number,
   date: string,
@@ -74,6 +80,15 @@ export const getTrainerAvailability = async (
     params: { date },
   });
   return data;
+};
+
+// Sessions must be in "YYYY-MM-DD HH:MM:SS" format
+// Slots from API are "HH:MM:SS" — combine with dateStr directly
+export const buildSessionDateTime = (
+  dateStr: string,
+  slotStart: string,
+): string => {
+  return `${dateStr} ${slotStart}`;
 };
 
 export const scheduleBooking = async (

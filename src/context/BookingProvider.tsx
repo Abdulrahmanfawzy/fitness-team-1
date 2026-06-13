@@ -2,17 +2,12 @@ import { useState, type ReactNode } from "react";
 import { BookingContext } from "./BookingContext";
 
 export function BookingProvider({ children }: { children: ReactNode }) {
-  const [selection, setSelection] = useState<{
-    trainerId: number | null;
-    trainerPackageId: number | null;
-    selectedDate: string | null;
-    selectedTime: string | null;
-  }>({
-    trainerId: null,
-    trainerPackageId: null,
-    selectedDate: null,
-    selectedTime: null,
-  });
+  const [trainerId, setTrainerId] = useState<number | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [trainerPackageId, setTrainerPackageId_state] = useState<number | null>(
+    null,
+  );
 
   const [result, setResult] = useState<{
     bookingId: number | null;
@@ -21,17 +16,14 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     packageTitle: string | null;
   }>({ bookingId: null, amount: null, trainerName: null, packageTitle: null });
 
-  const [trainerPackageId, setTrainerPackageId_state] = useState<number | null>(
-    null,
-  );
-
   const setBookingSelection = (data: {
     trainerId: number;
-    trainerPackageId: number;
     selectedDate: string;
     selectedTime: string;
   }) => {
-    setSelection(data);
+    setTrainerId(data.trainerId);
+    setSelectedDate(data.selectedDate);
+    setSelectedTime(data.selectedTime);
   };
 
   const setBookingResult = (data: {
@@ -48,26 +40,25 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   };
 
   const resetBooking = () => {
-    setSelection({
-      trainerId: null,
-      trainerPackageId: null,
-      selectedDate: null,
-      selectedTime: null,
-    });
+    setTrainerId(null);
+    setSelectedDate(null);
+    setSelectedTime(null);
+    setTrainerPackageId_state(null);
     setResult({
       bookingId: null,
       amount: null,
       trainerName: null,
       packageTitle: null,
     });
-    setTrainerPackageId_state(null);
   };
 
   return (
     <BookingContext.Provider
       value={{
-        ...selection,
+        trainerId,
         trainerPackageId,
+        selectedDate,
+        selectedTime,
         ...result,
         setBookingSelection,
         setBookingResult,

@@ -1,6 +1,5 @@
 import { Plus } from "lucide-react";
 import { FaPaypal } from "react-icons/fa";
-import { SiVodafone } from "react-icons/si";
 import { CiCreditCard1 } from "react-icons/ci";
 import type { PaymentMethod } from "@/lib/types/booking-types";
 
@@ -26,11 +25,7 @@ const methods: {
       label: "PayPal",
       icon: <FaPaypal size={16} className="text-blue-400" />,
     },
-    {
-      id: "vodafone",
-      label: "Vodafone Cash",
-      icon: <SiVodafone size={16} className="text-red-500" />,
-    },
+
   ];
 
 export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({

@@ -10,6 +10,7 @@ import {
   getTrainerSchedule,
   getTrainerAvailability,
   scheduleBooking,
+  buildSessionDateTime,
 } from "@/lib/api/booking.api";
 
 interface ScheduleSessionProps {
@@ -26,6 +27,8 @@ const DAY_NAME_MAP: Record<number, string> = {
   6: "saturday",
 };
 
+const formatSlotDisplay = (time: string) => time.slice(0, 5);
+
 export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
@@ -34,7 +37,10 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
     useBookingContext();
 
   const [date, setDate] = useState<Date | undefined>();
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState<{
+    start: string;
+    end: string;
+  } | null>(null);
 
   const { data: scheduleData } = useQuery({
     queryKey: ["trainer-schedule", trainerId],
@@ -50,7 +56,7 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
     enabled: !!trainerId && !!dateStr,
   });
 
-  const availableSlots = availabilityData?.available_slots ?? [];
+  const availableSlots = availabilityData?.slots ?? [];
   const availableDays = scheduleData?.schedule.map((s) => s.day_of_week) ?? [];
 
   const isDateDisabled = (d: Date) => {
@@ -65,28 +71,29 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
     isPending,
     isError,
   } = useMutation({
-    mutationFn: () => {
-      if (!trainerPackageId) throw new Error("No package selected");
+    // Receive packageId directly to avoid stale closure
+    mutationFn: (packageId: number) => {
+      if (!selectedSlot) throw new Error("No slot selected");
+      const sessionDateTime = buildSessionDateTime(dateStr, selectedSlot.start);
       return scheduleBooking({
-        trainer_package_id: trainerPackageId,
-        sessions: [`${dateStr} ${selectedTime}`],
+        trainer_package_id: packageId,
+        sessions: [sessionDateTime],
       });
     },
     onSuccess: (response) => {
       const booking = response.data;
-      setBookingSelection({
-        trainerId,
-        trainerPackageId: trainerPackageId!,
-        selectedDate: dateStr,
-        selectedTime,
-      });
       setBookingResult({
         bookingId: booking.id,
         amount: response.amount,
         trainerName: booking.trainer.name,
         packageTitle: booking.trainer_package.package.title,
       });
-      navigate("/booking");
+      setBookingSelection({
+        trainerId,
+        selectedDate: dateStr,
+        selectedTime: selectedSlot ? formatSlotDisplay(selectedSlot.start) : "",
+      });
+      navigate("/booking", { state: { bookingId: booking.id } });
     },
   });
 
@@ -99,8 +106,9 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-    if (!date || !selectedTime) return;
-    createBooking();
+    if (!date || !selectedSlot) return;
+    // Pass packageId directly — no stale closure issue
+    createBooking(trainerPackageId);
   };
 
   return (
@@ -126,7 +134,7 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
               selected={date}
               onSelect={(d) => {
                 setDate(d);
-                setSelectedTime("");
+                setSelectedSlot(null);
               }}
               disabled={isDateDisabled}
               className="w-full"
@@ -146,18 +154,23 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
               </p>
             )}
             <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-              {availableSlots.map((time) => (
-                <Button
-                  key={time}
-                  onClick={() => setSelectedTime(time)}
-                  className={`w-full text-sm ${
-                    selectedTime === time
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-black text-white hover:bg-zinc-700"
-                  }`}>
-                  {time}
-                </Button>
-              ))}
+              {availableSlots.map((slot) => {
+                const isSelected = selectedSlot?.start === slot.start;
+                return (
+                  <Button
+                    key={slot.start}
+                    onClick={() => setSelectedSlot(slot)}
+                    variant={isSelected ? "default" : "outline"}
+                    className={`text-xs ${
+                      isSelected
+                        ? "bg-red-500 hover:bg-red-600 text-white border-red-500"
+                        : "border-zinc-600 text-gray-300 hover:border-red-400 hover:text-white"
+                    }`}>
+                    {formatSlotDisplay(slot.start)} –{" "}
+                    {formatSlotDisplay(slot.end)}
+                  </Button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -165,13 +178,13 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
         <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-zinc-800 p-3 sm:p-4 rounded-xl">
           <p className="text-gray-300 text-sm text-center sm:text-left">
             {date
-              ? `${date.toDateString()} — ${selectedTime || "Select time"}`
+              ? `${date.toDateString()}${selectedSlot ? ` — ${formatSlotDisplay(selectedSlot.start)}` : " — Select time"}`
               : "No date selected"}
           </p>
           <Button
-            className="w-full sm:w-auto bg-primary hover:bg-red-600 px-6"
+            className="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white px-6"
             onClick={handleContinue}
-            disabled={!date || !selectedTime || isPending}>
+            disabled={!date || !selectedSlot || isPending}>
             {isPending ? "Preparing..." : "Continue booking →"}
           </Button>
         </div>
