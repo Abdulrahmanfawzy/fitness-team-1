@@ -17,7 +17,6 @@ export default function ProfileOverview() {
   const activePackage = packages?.find((p) => p.status === "Active");
   const nextSession = sessions?.[0];
 
-
   const { mutate: uploadImage } = useMutation({
     mutationFn: uploadProfileImage,
     onSuccess: (data) => {
@@ -35,6 +34,10 @@ export default function ProfileOverview() {
     uploadImage(file);
   };
 
+  const nextSessionLabel = nextSession
+    ? `${nextSession.date}, ${nextSession.time}`
+    : "No upcoming sessions";
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -51,18 +54,9 @@ export default function ProfileOverview() {
             ? new Date(user.membership_date).getFullYear()
             : ""
         }
-        sessionComplete={
-          activePackage
-            ? activePackage.sessions_total - activePackage.sessions_used
-            : 0
-        }
+        sessionComplete={activePackage?.sessions_used ?? 0}
         activePackage={activePackage?.name ?? "No active package"}
-        nextSession={
-          nextSession
-            ? `${nextSession.date}, ${nextSession.time}`
-            : "No upcoming sessions"
-        }
-        
+        nextSession={nextSessionLabel}
         avatarUrl={url ?? user?.profile_image ?? undefined}
         onAvatarClick={() => uploadInp.current?.click()}
       />

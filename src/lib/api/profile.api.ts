@@ -27,19 +27,13 @@ export interface ChangePasswordPayload {
   password_confirmation: string;
 }
 
-export interface AddPaymentMethodPayload {
-  card_number: string;
-  card_holder: string;
-  expiry_date: string;
-}
-
-// ─── Response Types ───────────────────────────────────────────────────────────
+// ─── Normalised Response Types (what the UI consumes) ────────────────────────
 
 export interface Session {
   id: number;
   trainer_name: string;
-  date: string;
-  time: string;
+  date: string; // "YYYY-MM-DD"
+  time: string; // "HH:MM"
   status: string;
   package_name: string;
 }
@@ -87,6 +81,58 @@ export interface UpdateProfileResponse {
   };
 }
 
+// ─── Raw API shapes (what the backend actually returns) ───────────────────────
+
+interface RawSession {
+  id: number;
+  booking_id: number;
+  trainer_id: number;
+  session_start: string; // "2026-06-17 14:00:00"
+  session_end: string;
+  session_status: string;
+  notes: string | null;
+}
+
+interface RawPackage {
+  booking_id: number;
+  trainer_id: number;
+  title: string;
+  description: string;
+  sessions: number; // total sessions in package
+  duration_days: number;
+  price: string;
+  is_active: number; // 1 | 0
+}
+
+// ─── Normalisation helpers ────────────────────────────────────────────────────
+
+// "2026-06-17 14:00:00" → date: "2026-06-17", time: "14:00"
+const splitDateTime = (dt: string) => {
+  const [date, timeFull] = dt.split(" ");
+  const time = timeFull?.slice(0, 5) ?? "";
+  return { date, time };
+};
+
+const normaliseSession = (raw: RawSession): Session => {
+  const { date, time } = splitDateTime(raw.session_start);
+  return {
+    id: raw.id,
+    trainer_name: `Trainer ${raw.trainer_id}`, // trainer name not returned by API
+    date,
+    time,
+    status: raw.session_status,
+    package_name: `Booking #${raw.booking_id}`,
+  };
+};
+
+const normalisePackage = (raw: RawPackage): Package => ({
+  id: raw.booking_id,
+  name: raw.title,
+  status: raw.is_active === 1 ? "Active" : "Inactive",
+  sessions_total: raw.sessions,
+  sessions_used: 0, // not returned by API — default to 0
+  expires_at: null, // not returned by API
+});
 
 // ─── API Calls ────────────────────────────────────────────────────────────────
 
@@ -105,12 +151,14 @@ export const updateUserProfile = async (
 
 export const getSessions = async (): Promise<Session[]> => {
   const { data } = await client.get("/profile/sessions");
-  return data.sessions;
+  const raw: RawSession[] = data.sessions ?? [];
+  return raw.map(normaliseSession);
 };
 
 export const getPackages = async (): Promise<Package[]> => {
   const { data } = await client.get("/profile/packages");
-  return data.packages;
+  const raw: RawPackage[] = data.packages ?? [];
+  return raw.map(normalisePackage);
 };
 
 export const getProgressActivity = async (): Promise<ProgressActivity> => {
@@ -120,12 +168,12 @@ export const getProgressActivity = async (): Promise<ProgressActivity> => {
 
 export const getWorkoutHistory = async (): Promise<WorkoutHistory[]> => {
   const { data } = await client.get("/profile/workout-history");
-  return data.history;
+  return data.history ?? [];
 };
 
 export const getPaymentMethods = async (): Promise<PaymentMethod[]> => {
   const { data } = await client.get("/profile/payment-methods");
-  return data.payment_methods;
+  return data.payment_methods ?? [];
 };
 
 export const uploadProfileImage = async (
@@ -148,15 +196,3 @@ export const changePassword = async (
 ): Promise<void> => {
   await client.post("/profile/change-password", payload);
 };
-
-
-// export const addPaymentMethod = async (
-//   payload: AddPaymentMethodPayload,
-// ): Promise<PaymentMethod> => {
-//   const { data } = await client.post("/profile/payment-methods", payload);
-//   return data;
-// };
-
-// export const deletePaymentMethod = async (id: number): Promise<void> => {
-//   await client.delete(`/cards/${id}`);
-// };

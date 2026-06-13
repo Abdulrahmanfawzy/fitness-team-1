@@ -46,19 +46,20 @@ export default function PersonalInfoForm() {
 
   const { mutate: saveProfile } = useMutation({
     mutationFn: updateUserProfile,
-    onSuccess: (response) => {
+    onSuccess: (_, variables) => {
+      // Use the submitted form values directly — the backend only persists
+      // name/email and returns null for the other fields (backend limitation).
       updateUser({
-        name: response.user.name,
-        about_me: response.user.about_me,
-        fitness_goals: response.user.fitness_goals,
-        preferred_training: response.user.preferred_training,
-        profile_image: response.user.profile_image ?? undefined,
+        name: variables.name,
+        about_me: variables.about_me ?? null,
+        fitness_goals: variables.fitness_goals ?? null,
+        preferred_training: variables.preferred_training ?? null,
       });
       toast.success("Profile updated successfully!");
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Failed to update profile. Please try again.");
-    }
+    },
   });
 
   const onSubmit = (data: UpdateProfilePayload) => {

@@ -1,14 +1,17 @@
-// StripeWrapper.tsx
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import type { ReactNode } from "react";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
+const stripePromise = key ? loadStripe(key) : null;
+
 interface Props {
-    children: ReactNode;
+  children: ReactNode;
 }
+
 const StripeWrapper = ({ children }: Props) => {
-    return <Elements stripe={stripePromise}>{children}</Elements>;
+  return <Elements stripe={stripePromise}>{children}</Elements>;
 };
 
 export default StripeWrapper;
