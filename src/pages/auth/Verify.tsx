@@ -1,6 +1,6 @@
 import AuthLayout from "@/components/layout/AuthLayout";
 import Button from "@/components/common/Button";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import Otp from "@/components/Auth/Otp";
 import { useMutation } from "@tanstack/react-query";
 import { verifyOtp } from "@/lib/api/Auth/auth.api";
@@ -8,6 +8,7 @@ import { useState } from "react";
 
 function maskEmail(email: string) {
   const [name, domain] = email.split("@");
+  if (!name || !domain) return email;
   return `${name[0]}***@${domain}`;
 }
 
@@ -15,7 +16,9 @@ export default function Verify() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const isForgotPassword = !!location.state?.email;
+
+  const isForgotPassword =
+    !location.state?.fromRegister && !!location.state?.email;
   const email =
     (location.state?.email as string) || searchParams.get("email") || "";
 
@@ -27,7 +30,11 @@ export default function Verify() {
       if (isForgotPassword) {
         navigate("/auth/reset-password", { state: { email, code } });
       } else {
-        navigate("/info");
+        // Backend doesn't return a token on verify — redirect to login.
+        // Login.tsx already handles navigating to /info if profile is incomplete.
+        navigate("/auth/login", {
+          state: { verified: true },
+        });
       }
     },
   });
@@ -42,12 +49,17 @@ export default function Verify() {
     <AuthLayout>
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4 text-center items-center justify-center">
-          <h2 className="font-bold text-4xl text-(--white-color) mt-5">
-            Enter Verification Code
+          <h2 className="font-bold text-4xl text-foreground mt-5">
+            {isForgotPassword ? "Reset Password" : "Verify your email"}
           </h2>
-          <p className="text-(--gray-color) text-md font-semibold">
-            We sent a code to{" "}
-            <span className="text-(--white-color)">{maskEmail(email)}</span>
+          <p className="text-muted-foreground text-sm">
+            We sent a 6-digit code to{" "}
+            <span className="text-foreground font-semibold">
+              {maskEmail(email)}
+            </span>
+          </p>
+          <p className="text-xs text-muted-foreground/60 max-w-xs leading-relaxed">
+            Check your inbox and spam folder. Enter the code below to continue.
           </p>
         </div>
 
@@ -55,8 +67,8 @@ export default function Verify() {
           <Otp onChange={setCode} />
 
           {error && (
-            <p className="text-red-400 text-sm text-center">
-              Invalid or expired OTP. Please try again.
+            <p className="text-destructive text-sm text-center">
+              Invalid or expired code. Please try again.
             </p>
           )}
 
@@ -66,6 +78,10 @@ export default function Verify() {
             disabled={code.length < 6 || isPending}
           />
         </form>
+
+        <p className="text-center text-xs text-muted-foreground/50">
+          Didn't receive a code? Check your spam folder.
+        </p>
       </div>
     </AuthLayout>
   );

@@ -7,41 +7,44 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isProfileComplete, setIsProfileComplete] = useState(false);
-  const [loading, setLoading] = useState(() => {
-    return !!localStorage.getItem("token");
-  });
+  const [loading, setLoading] = useState(() => !!localStorage.getItem("token"));
+
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    const storedProfileComplete = localStorage.getItem("is_profile_complete");
-    if (!storedToken) {
-      return;
-    }
+    if (!storedToken) return;
+
     getProfile()
       .then((response) => {
         setToken(storedToken);
         setUser(response.user);
-        setIsProfileComplete(storedProfileComplete === "1");
+        const complete = (response.user as any)?.fitness_profile !== null;
+        setIsProfileComplete(complete);
       })
       .catch((error) => {
-        if (import.meta.env.DEV) {
-          console.error("Failed to fetch profile:", error);
+        // Only clear session on 401 Unauthorized — not on network errors
+        if (error?.response?.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.removeItem("is_profile_complete");
+        } else {
+          // Network error or server down — restore from localStorage
+          const storedUser = localStorage.getItem("user");
+          const storedComplete = localStorage.getItem("is_profile_complete");
+          if (storedUser) setUser(JSON.parse(storedUser));
+          if (storedToken) setToken(storedToken);
+          setIsProfileComplete(storedComplete === "1");
         }
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("is_profile_complete");
       })
       .finally(() => setLoading(false));
   }, []);
 
-  const isLoggedIn = !!token;
-
-  const login = (user: AuthUser, token: string, isProfileComplete: boolean) => {
+  const login = (user: AuthUser, token: string, isComplete: boolean) => {
     setUser(user);
     setToken(token);
-    setIsProfileComplete(isProfileComplete);
+    setIsProfileComplete(isComplete);
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
-    localStorage.setItem("is_profile_complete", isProfileComplete ? "1" : "0");
+    localStorage.setItem("is_profile_complete", isComplete ? "1" : "0");
   };
 
   const logout = () => {
@@ -72,13 +75,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         token,
-        isLoggedIn,
+        isLoggedIn: !!token,
         isProfileComplete,
         login,
         logout,
         updateUser,
         setProfileComplete,
-        isLoading: loading, 
+        isLoading: loading,
       }}>
       {children}
     </AuthContext.Provider>

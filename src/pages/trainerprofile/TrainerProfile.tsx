@@ -8,6 +8,7 @@ import TrainerCertifictions from "@/components/trainer-profile/TrainerCertificat
 import TrainerDescription from "@/components/trainer-profile/TrainerDescription";
 import TrainerInfo from "@/components/trainer-profile/TrainerInfo";
 import TrainingPackages from "@/components/trainer-profile/TrainingPackages";
+import Spinner from "@/components/common/Spinner";
 
 export default function TrainerProfile() {
   const { id } = useParams<{ id: string }>();
@@ -20,18 +21,12 @@ export default function TrainerProfile() {
     enabled: !!trainerId,
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#111] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (isLoading) return <Spinner fullPage />;
 
   if (!trainer) {
     return (
-      <div className="min-h-screen bg-[#111] flex items-center justify-center">
-        <p className="text-white">Trainer not found.</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-foreground">Trainer not found.</p>
       </div>
     );
   }
@@ -43,9 +38,9 @@ export default function TrainerProfile() {
       <TrainerCertifictions trainer={trainer} />
       <TrainingPackages
         packages={trainer.packages}
-        onSelectPackage={() => {
-          scheduleRef.current?.scrollIntoView({ behavior: "smooth" });
-        }}
+        onSelectPackage={() =>
+          scheduleRef.current?.scrollIntoView({ behavior: "smooth" })
+        }
       />
       <OtherTrainers />
       <div ref={scheduleRef}>

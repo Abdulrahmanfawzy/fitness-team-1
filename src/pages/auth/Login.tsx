@@ -5,7 +5,7 @@ import { loginSchema, type loginFormData } from "@/lib/schemas/login.schema";
 import InputField from "@/components/Auth/InputField";
 import { Mail, Lock, LogIn, ArrowRight } from "lucide-react";
 import Button from "@/components/common/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import googleIcon from "@/assets/icons/google.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
@@ -14,7 +14,10 @@ import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+
+  const verifiedEmail = location.state?.email as string | undefined;
 
   const {
     register,
@@ -22,46 +25,53 @@ export default function Login() {
     formState: { errors },
   } = useForm<loginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: { email: verifiedEmail ?? "" },
   });
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: loginUser,
     onSuccess: (response) => {
-      const profileComplete = response.is_complete_the_profile === 1;
+      const profileComplete = true;
+
       login(response.user, response.token, profileComplete);
       navigate(profileComplete ? "/" : "/info");
     },
   });
 
   const onSubmit = (data: loginFormData) => {
-    mutate({
-      email: data.email,
-      password: data.password,
-    });
+    mutate({ email: data.email, password: data.password });
   };
 
   return (
     <AuthLayout>
       <div className="flex flex-col gap-6">
         <div className="flex justify-center">
-          <div className="w-12 h-12 bg-(--darkMain-color) rounded-xl flex items-center justify-center">
-            <LogIn className="text-(--main-color)" />
+          <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+            <LogIn className="text-primary" />
           </div>
         </div>
 
         <div className="flex flex-col gap-4">
-          <h2 className="font-bold text-4xl text-(--white-color) text-center">
+          <h2 className="font-bold text-4xl text-foreground text-center">
             Welcome Back!
           </h2>
-          <p className="text-(--gray-color) text-md flex items-center justify-center">
+          <p className="text-muted-foreground text-sm text-center">
             Login to your account to continue.
           </p>
         </div>
 
+        {location.state?.verified && (
+          <div className="px-4 py-3 rounded-xl bg-success/10 border border-success/30 text-center">
+            <p className="text-success text-sm font-semibold">
+              Email verified! Please log in to continue.
+            </p>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
           <InputField
-            label="Email or Phone"
-            placeholder="Enter your email or phone"
+            label="Email"
+            placeholder="Enter your email"
             type="text"
             register={register("email")}
             error={errors.email}
@@ -77,15 +87,16 @@ export default function Login() {
           />
 
           {error && (
-            <p className="text-red-400 text-sm text-center">
+            <p className="text-destructive text-sm text-center">
               {axios.isAxiosError(error) && error.response?.status === 401
                 ? "Invalid email or password."
                 : "Something went wrong. Please try again."}
             </p>
           )}
+
           <Link
             to="/auth/forgot-password"
-            className="text-(--main-color) hover:opacity-80 transition text-end font-semibold">
+            className="text-primary hover:opacity-80 transition text-end font-semibold text-sm">
             Forgot Password?
           </Link>
 
@@ -97,18 +108,18 @@ export default function Login() {
           />
         </form>
 
-        <p className="font-bold text-(--white-color) flex justify-center items-center gap-2">
+        <p className="font-bold text-foreground flex justify-center items-center gap-2">
           Don't have an account?
           <Link
             to="/auth/signup"
-            className="text-(--main-color) hover:opacity-80 transition underline">
+            className="text-primary hover:opacity-80 transition underline">
             Sign up
           </Link>
         </p>
 
         <div className="flex items-center gap-3">
           <hr className="flex-1 border-white/20" />
-          <span className="text-(--gray-color) font-semibold text-sm">
+          <span className="text-muted-foreground font-semibold text-sm">
             Or Login with
           </span>
           <hr className="flex-1 border-white/20" />
@@ -116,8 +127,8 @@ export default function Login() {
 
         <button
           type="button"
-          className="w-full h-12 rounded-lg bg-(--darkGrey-color) cursor-pointer flex items-center justify-center hover:opacity-80 transition">
-          <img src={googleIcon} width={20} height={20} />
+          className="w-full h-12 rounded-lg bg-elevated cursor-pointer flex items-center justify-center hover:opacity-80 transition">
+          <img src={googleIcon} width={20} height={20} alt="Google" />
         </button>
       </div>
     </AuthLayout>

@@ -4,12 +4,13 @@ import { NAVBAR_ACTIONS } from "@/lib/constants/navbar/navbar.constants";
 import { useAuth } from "@/hooks/useAuth";
 import MobileSideBar from "@/components/common/SideBar/MobileSidebar";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function NavbarActions() {
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const handleClose = useCallback(() => setMobileOpen(false), []);
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
@@ -37,10 +38,9 @@ export default function NavbarActions() {
                 </span>
               </div>
             )}
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-background" />
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success rounded-full border-2 border-background" />
           </button>
         </div>
-
         <div className="lg:hidden">
           <Button
             onClick={() => setMobileOpen((prev) => !prev)}
@@ -48,8 +48,7 @@ export default function NavbarActions() {
             <Menu />
           </Button>
         </div>
-
-        <MobileSideBar onClose={() => setMobileOpen(false)} open={mobileOpen} />
+        <MobileSideBar onClose={handleClose} open={mobileOpen} />
       </>
     );
   }
@@ -61,8 +60,8 @@ export default function NavbarActions() {
           key={action.label}
           className={`type-body-m weight-semibold inline-flex min-w-28 items-center justify-center rounded-xl px-6 py-2.5 transition-colors ${
             action.variant === "primary"
-              ? "bg-cta-primary text-text-primary hover:bg-cta-hover"
-              : "border border-cta-primary/80 text-text-primary hover:bg-[#171a21]"
+              ? "bg-cta-primary text-white hover:bg-cta-hover"
+              : "border border-cta-primary/80 text-foreground hover:bg-secondary"
           }`}
           to={action.href}>
           {action.label}

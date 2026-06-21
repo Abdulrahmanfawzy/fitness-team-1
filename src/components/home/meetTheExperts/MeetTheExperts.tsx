@@ -4,11 +4,13 @@ import TrainerCard from "@/components/common/TrainerCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useGetTrainers } from "@/hooks/useGetTrainers";
+import { useNavigate } from "react-router-dom";
 
 const DESKTOP_BREAKPOINT = 1024;
 
 export default function MeetTheExperts() {
   const { data: trainers = [], isLoading } = useGetTrainers();
+  const navigate = useNavigate();
 
   const [startIndex, setStartIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(() =>
@@ -35,18 +37,20 @@ export default function MeetTheExperts() {
 
   const handlePrev = () =>
     setStartIndex((prev) => Math.max(0, prev - itemsPerView));
-
   const handleNext = () =>
     setStartIndex((prev) => Math.min(maxStartIndex, prev + itemsPerView));
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-center px-3 py-12 md:py-16">
-      <SectionHighlight text="our trainers" />
-      <div className="flex justify-between items-center flex-col md:flex-row w-full">
-        <h2 className="mt-4 text-left text-4xl md:text-h1 font-bold">
+    <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center px-3 py-12 md:py-16">
+      <div className="w-full flex justify-center">
+        <SectionHighlight text="our trainers" />
+      </div>
+
+      <div className="flex justify-between items-center flex-col md:flex-row w-full mt-4">
+        <h2 className="text-center md:text-left text-4xl md:text-h1 font-bold">
           Meet the <span className="text-cta-primary">Experts</span>
         </h2>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mt-4 md:mt-0">
           <Button
             ariaLabel="Previous trainers"
             className="mt-0 h-14 rounded-2xl py-0"
@@ -73,14 +77,14 @@ export default function MeetTheExperts() {
             variant="outlinePrimary"
             width="w-auto"
             withShadow={false}
+            onClick={() => navigate("/trainers")}
           />
         </div>
       </div>
 
       <div className="mt-8 grid w-full grid-cols-1 items-stretch gap-4 lg:grid-cols-3">
         {isLoading
-          ? // Skeleton placeholders while loading
-            Array.from({ length: itemsPerView }).map((_, i) => (
+          ? Array.from({ length: itemsPerView }).map((_, i) => (
               <div key={i} className="h-96 rounded-2xl bg-card animate-pulse" />
             ))
           : visibleTrainers.map((trainer) => (

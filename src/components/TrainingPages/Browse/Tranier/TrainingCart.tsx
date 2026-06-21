@@ -21,25 +21,19 @@ const TrainingCart = () => {
     specializationId,
     enabled,
   );
-
   const [Params] = useSearchParams();
   const search = Params.get("search") || "";
   const loading = isLoading || searchLoading || filterLoading;
 
   const data = useMemo(() => {
-    if (search && enabled && searchResults && filterResults) {
+    if (search && enabled && searchResults && filterResults)
       return searchResults.filter((trainer) =>
         filterResults.some((f) => f.id === trainer.id),
       );
-    }
     if (search) return searchResults;
     if (enabled) return filterResults;
     return trainers;
   }, [search, enabled, searchResults, filterResults, trainers]);
-
-  const handleMore = () => {
-    SetLoad((pre) => pre + 3);
-  };
 
   return (
     <>
@@ -48,12 +42,11 @@ const TrainingCart = () => {
           <NotFoundSearch />
         </div>
       ) : (
-        <div className="bg-linear-to-b from-[#1F0D0D] to-[#1c1717] pb-10 w-full">
+        <div className="bg-gradient-to-b from-brand-deep to-raised pb-10 w-full">
           <div className="w-full px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl pt-14.5">
             <p className="text-[32px] text-center sm:text-start">
               Meet Our <span className="text-primary">Trainers</span>
             </p>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-9.75 gap-x-5 gap-y-12 justify-items-center">
               {loading
                 ? Array.from({ length: 3 }).map((_, i) => (
@@ -68,18 +61,17 @@ const TrainingCart = () => {
                         name={trainer.name}
                         image={trainer.profile_image}
                         rating={+trainer.rating || 4.5}
-                        location={trainer.location || "Cario, Egypt"}
+                        location={trainer.location || "Cairo, Egypt"}
                         specialties={trainer.specializations ?? []}
                         experience_years={trainer.experience_years || 5}
                       />
                     ))}
             </div>
-
             {(data?.length ?? 0) > Load && (
               <div className="flex items-center justify-center mt-10">
                 <Button
                   className="px-10 py-6 text-[18px] fw-medium rounded-[5px] bg-primary hover:bg-cta-hover cursor-pointer transition-all"
-                  onClick={handleMore}>
+                  onClick={() => SetLoad((p) => p + 3)}>
                   Load More
                 </Button>
               </div>
