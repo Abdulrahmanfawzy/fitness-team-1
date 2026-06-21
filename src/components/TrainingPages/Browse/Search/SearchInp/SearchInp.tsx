@@ -9,53 +9,44 @@ const SearchInp = () => {
   const [searchParams, setParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
-  // Handle Search
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setSearch(value);
-
-      if (value) {
-        setParams(new URLSearchParams({ search: value }));
-      } else {
-        setParams(new URLSearchParams());
-      }
+      setParams(
+        value ? new URLSearchParams({ search: value }) : new URLSearchParams(),
+      );
     },
     [setParams],
   );
 
   return (
-    <div className="relative w-full mx-auto   sm:mx-0  sm:p-0 sm:w-[737px]">
+    <div className="relative w-full mx-auto sm:mx-0 sm:p-0 sm:w-184.25">
       <div className="flex items-center gap-3 z-50 relative">
         <div className="relative flex-1">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
             <Search size={20} />
           </div>
           <Input
             placeholder="Search workouts"
-            className="pl-10 h-[50px] w-full bg-[#1a1a1a] border-[#333] text-white placeholder:text-gray-500 rounded-md focus:border-[#ff5c5c] transition-all"
+            className="pl-10 h-[50px] w-full bg-raised border-border text-foreground placeholder:text-muted-foreground rounded-md focus:border-primary transition-all"
             value={search}
-            onChange={(e) => handleSearch(e)}
+            onChange={handleSearch}
             onFocus={() => setOpen(true)}
           />
         </div>
-
-        {/* Cancel */}
         {open && (
           <span
-            className="text-white cursor-pointer hover:text-[#ff5c5c] font-medium"
+            className="text-foreground cursor-pointer hover:text-primary font-medium"
             onClick={() => {
               setOpen(false);
               setParams(new URLSearchParams());
               setSearch("");
-            }}
-          >
+            }}>
             Cancel
           </span>
         )}
       </div>
-
-      {/* Search Dropdown */}
       {open && !search && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />

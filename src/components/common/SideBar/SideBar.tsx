@@ -33,14 +33,14 @@ function SideBar() {
                 </span>
               </div>
             )}
-            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-400 border-2 border-primary rounded-full" />
+            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-success border-2 border-primary rounded-full" />
           </div>
           <div>
             <p className="font-bold text-primary-foreground text-base leading-tight">
               {user?.name}
             </p>
             <span className="text-xs text-primary-foreground/60 mt-0.5 block">
-              Premium Member
+              {user?.email}
             </span>
           </div>
         </div>

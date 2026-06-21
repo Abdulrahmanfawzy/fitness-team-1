@@ -5,17 +5,20 @@ import ProfileHeader from "@/components/common/UserProfile/ProfileHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { uploadProfileImage } from "@/lib/api/profile.api";
 import { useMutation } from "@tanstack/react-query";
-import { usePackages, useSessions } from "@/hooks/useProfileData";
+import { useSessions } from "@/hooks/useProfileData";
 
 export default function ProfileOverview() {
   const { user, updateUser } = useAuth();
   const uploadInp = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState<string | null>(null);
-  const { data: packages } = usePackages();
   const { data: sessions } = useSessions();
 
-  const activePackage = packages?.find((p) => p.status === "Active");
-  const nextSession = sessions?.[0];
+  // Only show future sessions
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const upcomingSessions =
+    sessions?.filter((s) => new Date(s.date) >= today) ?? [];
+  const nextSession = upcomingSessions[0];
 
   const { mutate: uploadImage } = useMutation({
     mutationFn: uploadProfileImage,
@@ -49,13 +52,7 @@ export default function ProfileOverview() {
 
       <ProfileHeader
         name={user?.name ?? ""}
-        member={
-          user?.membership_date
-            ? new Date(user.membership_date).getFullYear()
-            : ""
-        }
-        sessionComplete={activePackage?.sessions_used ?? 0}
-        activePackage={activePackage?.name ?? "No active package"}
+        upcomingSessions={upcomingSessions.length}
         nextSession={nextSessionLabel}
         avatarUrl={url ?? user?.profile_image ?? undefined}
         onAvatarClick={() => uploadInp.current?.click()}

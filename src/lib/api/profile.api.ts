@@ -27,13 +27,13 @@ export interface ChangePasswordPayload {
   password_confirmation: string;
 }
 
-// ─── Normalised Response Types (what the UI consumes) ────────────────────────
+// ─── Response Types (what the UI consumes) ────────────────────────
 
 export interface Session {
   id: number;
   trainer_name: string;
-  date: string; // "YYYY-MM-DD"
-  time: string; // "HH:MM"
+  date: string; 
+  time: string; 
   status: string;
   package_name: string;
 }
@@ -61,6 +61,16 @@ export interface WorkoutHistory {
   calories_burned: number | null;
 }
 
+interface RawWorkoutHistory {
+  id: number;
+  booking_id: number;
+  trainer_id: number;
+  session_start: string;
+  session_end: string;
+  session_status: string;
+  notes: string | null;
+}
+
 export interface PaymentMethod {
   id: number;
   type: string;
@@ -81,13 +91,13 @@ export interface UpdateProfileResponse {
   };
 }
 
-// ─── Raw API shapes (what the backend actually returns) ───────────────────────
+// ─── Raw API shapes ───────────────────────
 
 interface RawSession {
   id: number;
   booking_id: number;
   trainer_id: number;
-  session_start: string; // "2026-06-17 14:00:00"
+  session_start: string; 
   session_end: string;
   session_status: string;
   notes: string | null;
@@ -98,15 +108,14 @@ interface RawPackage {
   trainer_id: number;
   title: string;
   description: string;
-  sessions: number; // total sessions in package
+  sessions: number;
   duration_days: number;
   price: string;
-  is_active: number; // 1 | 0
+  is_active: number;
 }
 
 // ─── Normalisation helpers ────────────────────────────────────────────────────
 
-// "2026-06-17 14:00:00" → date: "2026-06-17", time: "14:00"
 const splitDateTime = (dt: string) => {
   const [date, timeFull] = dt.split(" ");
   const time = timeFull?.slice(0, 5) ?? "";
@@ -130,8 +139,8 @@ const normalisePackage = (raw: RawPackage): Package => ({
   name: raw.title,
   status: raw.is_active === 1 ? "Active" : "Inactive",
   sessions_total: raw.sessions,
-  sessions_used: 0, // not returned by API — default to 0
-  expires_at: null, // not returned by API
+  sessions_used: 0, 
+  expires_at: null, 
 });
 
 // ─── API Calls ────────────────────────────────────────────────────────────────
@@ -168,7 +177,21 @@ export const getProgressActivity = async (): Promise<ProgressActivity> => {
 
 export const getWorkoutHistory = async (): Promise<WorkoutHistory[]> => {
   const { data } = await client.get("/profile/workout-history");
-  return data.history ?? [];
+  const raw: RawWorkoutHistory[] = data.history ?? [];
+  return raw.map((item) => {
+    const { date, time: startTime } = splitDateTime(item.session_start);
+    const { time: endTime } = splitDateTime(item.session_end);
+    const [startH, startM] = startTime.split(":").map(Number);
+    const [endH, endM] = endTime.split(":").map(Number);
+    const duration = endH * 60 + endM - (startH * 60 + startM);
+    return {
+      id: item.id,
+      date,
+      exercise: `Session with Trainer #${item.trainer_id}`,
+      duration_minutes: duration > 0 ? duration : 60,
+      calories_burned: null,
+    };
+  });
 };
 
 export const getPaymentMethods = async (): Promise<PaymentMethod[]> => {

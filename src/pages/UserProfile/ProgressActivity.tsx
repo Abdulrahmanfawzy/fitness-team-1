@@ -1,12 +1,11 @@
-import { Clock, Flame, Package } from "lucide-react";
+import { CalendarClock } from "lucide-react";
 import StatBadge from "../../components/common/UserProfile/StatBadge";
-import SessionsOverTime from "../../components/common/UserProfile/SessionOverTime";
 import { useProgressActivity } from "@/hooks/useProfileData";
+import Spinner from "@/components/common/Spinner";
 
 export default function ProgressActivity() {
   const { data: progress, isLoading } = useProgressActivity();
-  
-  if (isLoading) return <p className="text-white px-10">Loading...</p>;
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="flex flex-col gap-6 px-4 sm:px-10">
@@ -15,22 +14,11 @@ export default function ProgressActivity() {
       </h2>
       <div className="flex flex-col sm:flex-row gap-4">
         <StatBadge
-          icon={<Flame size={24} />}
-          label="Completed Sessions"
-          value={progress?.completed_sessions ?? 0}
-        />
-        <StatBadge
-          icon={<Package size={24} />}
+          icon={<CalendarClock size={24} />}
           label="Upcoming Sessions"
-          value={progress?.upcoming_sessions ?? 0}
-        />
-        <StatBadge
-          icon={<Clock size={24} />}
-          label="Cancelled Sessions"
-          value={progress?.cancelled_sessions ?? 0}
+          value={String(progress?.upcoming_sessions ?? 0)}
         />
       </div>
-      <SessionsOverTime />
     </div>
   );
 }

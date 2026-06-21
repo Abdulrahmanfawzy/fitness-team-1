@@ -12,6 +12,7 @@ import {
   scheduleBooking,
   buildSessionDateTime,
 } from "@/lib/api/booking.api";
+import Spinner from "@/components/common/Spinner";
 
 interface ScheduleSessionProps {
   trainerId: number;
@@ -27,6 +28,7 @@ const DAY_NAME_MAP: Record<number, string> = {
   6: "saturday",
 };
 
+// Format "HH:MM:SS" → "HH:MM" for display
 const formatSlotDisplay = (time: string) => time.slice(0, 5);
 
 export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
@@ -71,7 +73,6 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
     isPending,
     isError,
   } = useMutation({
-    // Receive packageId directly to avoid stale closure
     mutationFn: (packageId: number) => {
       if (!selectedSlot) throw new Error("No slot selected");
       const sessionDateTime = buildSessionDateTime(dateStr, selectedSlot.start);
@@ -107,7 +108,6 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
       return;
     }
     if (!date || !selectedSlot) return;
-    // Pass packageId directly — no stale closure issue
     createBooking(trainerPackageId);
   };
 
@@ -145,9 +145,7 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
             <p className="text-gray-400 mb-3 text-sm">
               {date ? "Available Times" : "Select a date first"}
             </p>
-            {loadingSlots && (
-              <p className="text-gray-500 text-xs">Loading slots...</p>
-            )}
+            {loadingSlots && <Spinner size="sm" />}
             {!loadingSlots && date && availableSlots.length === 0 && (
               <p className="text-gray-500 text-xs">
                 No slots available for this date.

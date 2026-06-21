@@ -9,11 +9,10 @@ import { Link, useNavigate } from "react-router-dom";
 import googleIcon from "@/assets/icons/google.png";
 import { useMutation } from "@tanstack/react-query";
 import { getGoogleRedirectUrl, registerUser } from "@/lib/api/Auth/auth.api";
-import { useAuth } from "@/hooks/useAuth";
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -25,8 +24,17 @@ export default function SignUp() {
   const { mutate, isPending, error } = useMutation({
     mutationFn: registerUser,
     onSuccess: (response, variables) => {
-      login(response.user, response.token, response.is_complete_the_profile === 1);
-      navigate(`/auth/verify?email=${encodeURIComponent(variables.email)}`);
+      // Store credentials temporarily — login happens after email verification
+      sessionStorage.setItem(
+        "pending_auth",
+        JSON.stringify({
+          user: response.user,
+          token: response.token,
+        }),
+      );
+      navigate(`/auth/verify?email=${encodeURIComponent(variables.email)}`, {
+        state: { fromRegister: true },
+      });
     },
   });
 
@@ -36,7 +44,7 @@ export default function SignUp() {
       email: data.email,
       password: data.password,
       password_confirmation: data.password_confirmation,
-      role: data.role,
+      role: "trainee",
     });
   };
 
@@ -48,7 +56,7 @@ export default function SignUp() {
   return (
     <AuthLayout>
       <div className="flex flex-col gap-6">
-        <h2 className="font-bold mt-4 text-4xl text-(--white-color) text-center">
+        <h2 className="font-bold mt-4 text-4xl text-foreground text-center">
           Sign Up
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
@@ -84,24 +92,8 @@ export default function SignUp() {
             icon={<Lock size={16} />}
           />
 
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-(--gray-color)">
-              Role
-            </label>
-            <select
-              {...register("role")}
-              className="h-11 rounded-lg bg-(--darkGrey-color) border border-(--gray-color) text-white px-3 text-sm focus:outline-none focus:border-(--main-color) cursor-pointer">
-              <option value="">Select your role</option>
-              <option value="trainee">Trainee</option>
-              <option value="trainer">Trainer</option>
-            </select>
-            {errors.role && (
-              <p className="text-red-400 text-xs">{errors.role.message}</p>
-            )}
-          </div>
-
           {error && (
-            <p className="text-red-400 text-sm text-center">
+            <p className="text-destructive text-sm text-center">
               Registration failed. Please try again.
             </p>
           )}
@@ -113,25 +105,27 @@ export default function SignUp() {
           />
         </form>
 
-        <p className="font-bold text-(--white-color) flex justify-center items-center gap-2">
+        <p className="font-bold text-foreground flex justify-center items-center gap-2">
           Already have an account?
           <Link
             to="/auth/login"
-            className="text-(--main-color) hover:opacity-80 transition underline">
+            className="text-primary hover:opacity-80 transition underline">
             Login
           </Link>
         </p>
+
         <div className="flex items-center gap-3">
           <hr className="flex-1 border-white/20" />
-          <span className="text-(--gray-color) font-semibold text-sm">
+          <span className="text-muted-foreground font-semibold text-sm">
             Or Sign Up
           </span>
           <hr className="flex-1 border-white/20" />
         </div>
+
         <button
           type="button"
           aria-label="Sign in with Google"
-          className="w-full h-12 rounded-lg bg-(--darkGrey-color) mb-6 cursor-pointer flex items-center justify-center hover:opacity-80 transition"
+          className="w-full h-12 rounded-lg bg-elevated mb-6 cursor-pointer flex items-center justify-center hover:opacity-80 transition"
           onClick={handleGoogleLogin}>
           <img
             src={googleIcon}

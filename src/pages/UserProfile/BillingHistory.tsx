@@ -1,5 +1,6 @@
 import { Download } from "lucide-react";
 import { useInvoices } from "@/hooks/useProfileData";
+import Spinner from "@/components/common/Spinner";
 
 const statusStyles: Record<string, string> = {
   Paid: "bg-green-500/15 text-green-400",
@@ -9,7 +10,7 @@ const statusStyles: Record<string, string> = {
 
 export default function BillingHistory() {
   const { data: invoices = [], isLoading } = useInvoices();
-  if (isLoading) return <p className="text-white px-10">Loading...</p>;
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="flex flex-col gap-6 px-4 sm:px-10">
@@ -17,25 +18,24 @@ export default function BillingHistory() {
         <h2 className="text-2xl sm:text-3xl font-bold text-white">
           Billing History
         </h2>
-        <p className="text-sm text-(--gray-color) mt-1 p-1">
+        <p className="text-sm text-muted-foreground mt-1 p-1">
           View and download your past invoices
         </p>
       </div>
 
-      <div className="border border-(--gray-color) rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-5 px-6 py-4 border-b border-(--gray-color) bg-(--color-raised)/40">
+      <div className="border border-border rounded-2xl overflow-hidden">
+        <div className="grid grid-cols-5 px-6 py-4 border-b border-border bg-raised/40">
           {["Invoice", "Date", "Description", "Amount", "Status"].map((h) => (
             <span
               key={h}
-              className="text-xs font-bold uppercase tracking-widest text-(--gray-color)">
+              className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
               {h}
             </span>
           ))}
         </div>
-
-        <div className="divide-y divide-(--gray-color)">
+        <div className="divide-y divide-border">
           {invoices.length === 0 ? (
-            <p className="text-(--gray-color) text-sm px-6 py-5">
+            <p className="text-muted-foreground text-sm px-6 py-5">
               No billing history yet.
             </p>
           ) : (
@@ -46,7 +46,9 @@ export default function BillingHistory() {
                 <span className="text-sm text-white/70 group-hover:text-white transition-colors duration-200">
                   {inv.invoice_id}
                 </span>
-                <span className="text-sm text-(--gray-color)">{inv.date}</span>
+                <span className="text-sm text-muted-foreground">
+                  {inv.date}
+                </span>
                 <span className="text-sm text-white font-medium">
                   {inv.description}
                 </span>
@@ -55,9 +57,7 @@ export default function BillingHistory() {
                 </span>
                 <div className="flex items-center justify-between">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      statusStyles[inv.status] ?? "bg-gray-500/15 text-gray-400"
-                    }`}>
+                    className={`px-3 py-1 rounded-full text-xs font-bold ${statusStyles[inv.status] ?? "bg-gray-500/15 text-gray-400"}`}>
                     {inv.status}
                   </span>
                   <button
