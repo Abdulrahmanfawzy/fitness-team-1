@@ -41,6 +41,11 @@ export default function ProfileOverview() {
     ? `${nextSession.date}, ${nextSession.time}`
     : "No upcoming sessions";
 
+  const handleDeleteAvatar = () => {
+    setUrl(null);
+    updateUser({ profile_image: null });
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -56,6 +61,7 @@ export default function ProfileOverview() {
         nextSession={nextSessionLabel}
         avatarUrl={url ?? user?.profile_image ?? undefined}
         onAvatarClick={() => uploadInp.current?.click()}
+        onAvatarDelete={handleDeleteAvatar}
       />
 
       <input
