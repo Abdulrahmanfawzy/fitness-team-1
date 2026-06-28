@@ -22,6 +22,7 @@ import WorkoutHistory from "@/pages/UserProfile/WorkoutHistory";
 import PaymentMethods from "@/pages/UserProfile/PaymentMethods";
 import BillingHistory from "@/pages/UserProfile/BillingHistory";
 import SecurityPassword from "@/pages/UserProfile/SecurityPassword";
+import SchedulePage from "@/pages/booking/SchedulePage";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
       { path: "trainer/:id", element: <TrainerProfile /> },
       { path: "packages", element: <PackagePage /> },
       { path: "contact-us", element: <ContactUs /> },
+      { path: "schedule", element: <SchedulePage /> },
       {
         path: "booking",
         element: <PrivateRoute />,

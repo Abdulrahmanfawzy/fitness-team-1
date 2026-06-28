@@ -3,10 +3,13 @@ import type { TrainerDetails } from "@/lib/api/triners/TrainersApi";
 
 interface TrainingPackagesProps {
   packages: TrainerDetails["packages"];
-  onSelectPackage: () => void;
+  onSelectPackage: (packageId: number) => void;
 }
 
-export default function TrainingPackages({ packages, onSelectPackage }: TrainingPackagesProps) {
+export default function TrainingPackages({
+  packages,
+  onSelectPackage,
+}: TrainingPackagesProps) {
   if (!packages || packages.length === 0) {
     return (
       <div className="container w-10/12 mx-auto text-center py-12">
@@ -34,7 +37,7 @@ export default function TrainingPackages({ packages, onSelectPackage }: Training
             sessions={String(pkg.sessions)}
             features={pkg.features}
             isRecommended={index === 1}
-            onSelectPackage={onSelectPackage} 
+            onSelectPackage={() => onSelectPackage(pkg.trainer_package_id)}
           />
         ))}
       </div>

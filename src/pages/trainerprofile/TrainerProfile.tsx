@@ -1,9 +1,7 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
 import { getTrainerById } from "@/lib/api/triners/TrainersApi";
 import OtherTrainers from "@/components/trainer-profile/OtherTrainers";
-import ScheduleSession from "@/components/trainer-profile/ScheduleSession";
 import TrainerCertifictions from "@/components/trainer-profile/TrainerCertification";
 import TrainerDescription from "@/components/trainer-profile/TrainerDescription";
 import TrainerInfo from "@/components/trainer-profile/TrainerInfo";
@@ -13,7 +11,7 @@ import Spinner from "@/components/common/Spinner";
 export default function TrainerProfile() {
   const { id } = useParams<{ id: string }>();
   const trainerId = Number(id);
-  const scheduleRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const { data: trainer, isLoading } = useQuery({
     queryKey: ["trainer", trainerId],
@@ -38,14 +36,11 @@ export default function TrainerProfile() {
       <TrainerCertifictions trainer={trainer} />
       <TrainingPackages
         packages={trainer.packages}
-        onSelectPackage={() =>
-          scheduleRef.current?.scrollIntoView({ behavior: "smooth" })
+        onSelectPackage={(packageId: number) =>
+          navigate(`/schedule?trainerId=${trainerId}&packageId=${packageId}`)
         }
       />
       <OtherTrainers />
-      <div ref={scheduleRef}>
-        <ScheduleSession trainerId={trainerId} />
-      </div>
     </>
   );
 }

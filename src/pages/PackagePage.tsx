@@ -1,12 +1,15 @@
 import ComparisonTable from "@/components/common/package/ComparisonTable";
 import PackageCard from "@/components/common/PackageCard";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
 import { MdVerified } from "react-icons/md";
 import type { PackageType, RawPackageFromAPI } from "@/lib/types/package-types";
 import client from "@/lib/api/client";
 
 const PackagePage = () => {
+  const navigate = useNavigate();
+
   const { data } = useQuery({
     queryKey: ["public-packages"],
     queryFn: async () => {
@@ -28,13 +31,14 @@ const PackagePage = () => {
   const packages: PackageType[] = data || [];
 
   return (
-    <div className="min-h-screen bg-background text-white py-20 px-4">
+    <div className="min-h-screen bg-background text-white py-20 px-4 overflow-x-hidden">
       <div className="text-center mb-16">
         <h1 className="text-4xl font-bold mb-4">Training Packages</h1>
         <p className="text-muted-foreground">
           Choose a training plan that matches your goals and schedule
         </p>
       </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {packages.map((pkg, index) => (
           <PackageCard
@@ -45,11 +49,15 @@ const PackagePage = () => {
             sessions={pkg.sessions}
             features={pkg.features}
             isRecommended={index === 1}
-            onSelectPackage={() => {}}
+            onSelectPackage={(packageId: number) =>
+              navigate("/trainers", { state: { packageId } })
+            }
           />
         ))}
       </div>
+
       <ComparisonTable />
+
       <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-12">
         <div className="flex items-start gap-4 p-6 bg-raised border border-border rounded-xl">
           <IoShieldCheckmarkSharp className="text-success shrink-0" size={35} />
