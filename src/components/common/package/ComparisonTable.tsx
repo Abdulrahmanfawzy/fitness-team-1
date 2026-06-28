@@ -37,52 +37,52 @@ const ComparisonTable = () => {
   ];
 
   return (
-    <div className="mt-20 w-full max-w-[1200px] mx-auto border border-zinc-800 rounded-xl bg-[#110e0e] overflow-hidden">
+    <div className="mt-20 w-full border border-zinc-800 rounded-xl bg-[#110e0e] overflow-hidden">
       <div className="p-7 text-center border-b border-zinc-800">
         <h2 className="text-2xl font-bold text-white tracking-widest uppercase">
           Compare Features
         </h2>
       </div>
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="text-white uppercase text-md tracking-widest">
-            <th className="p-6">Feature</th>
-            <th className="p-6 text-center">Single</th>
-            <th className="p-6 text-center">Monthly</th>
-            <th className="p-6 text-center">Premium</th>
-          </tr>
-        </thead>
-        <tbody className="text-zinc-50 text-sm">
-          {rows.map((row, idx) => (
-            <tr key={idx} className="border-t border-zinc-800/50">
-              <td className="p-6 uppercase text-zinc-400 font-medium">
-                {row.name}
-              </td>
-              <td className="p-6 text-center">
-                <div className="flex justify-center items-center ">
-                  {row.single}
-                </div>
-              </td>
-
-              <td className="p-6 text-center">
-                <div
-                  className={`flex justify-center items-center ${typeof row.monthly !== "string" || row.monthly === "✔" ? "text-red-500" : ""}`}
-                >
-                  {row.monthly}
-                </div>
-              </td>
-
-              <td className="p-6 text-center">
-                <div
-                  className={`flex justify-center items-center ${typeof row.premium !== "string" || row.monthly === "✔" ? "text-red-500" : ""}`}
-                >
-                  {row.premium}
-                </div>
-              </td>
+      <div className="overflow-x-auto w-full -webkit-overflow-scrolling-touch">
+        <table className="w-full min-w-[560px] text-left border-collapse">
+          <thead>
+            <tr className="text-white uppercase text-md tracking-widest">
+              <th className="p-6">Feature</th>
+              <th className="p-6 text-center">Single</th>
+              <th className="p-6 text-center">Monthly</th>
+              <th className="p-6 text-center">Premium</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="text-zinc-50 text-sm">
+            {rows.map((row, idx) => (
+              <tr key={idx} className="border-t border-zinc-800/50">
+                <td className="p-6 uppercase text-zinc-400 font-medium">
+                  {row.name}
+                </td>
+                <td className="p-6 text-center">
+                  <div className="flex justify-center items-center ">
+                    {row.single}
+                  </div>
+                </td>
+
+                <td className="p-6 text-center">
+                  <div
+                    className={`flex justify-center items-center ${typeof row.monthly !== "string" || row.monthly === "✔" ? "text-red-500" : ""}`}>
+                    {row.monthly}
+                  </div>
+                </td>
+
+                <td className="p-6 text-center">
+                  <div
+                    className={`flex justify-center items-center ${typeof row.premium !== "string" || row.monthly === "✔" ? "text-red-500" : ""}`}>
+                    {row.premium}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
