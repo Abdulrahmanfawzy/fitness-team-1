@@ -15,6 +15,7 @@ const SUBJECTS = [
 
 export type ContactFormData = z.infer<typeof contactSchema>;
 export const ContactForm: React.FC = () => {
+  const [sent, setSent] = useState(false);
 
   const {
     register,
@@ -23,19 +24,19 @@ export const ContactForm: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
-    mode: "onSubmit",          // 👈 يظهر errors بعد submit بس
-    reValidateMode: "onChange" // 👈 بعد ما يظهر error يبدأ يتصلح live
+    mode: "onSubmit", // 👈 يظهر errors بعد submit بس
+    reValidateMode: "onChange", // 👈 بعد ما يظهر error يبدأ يتصلح live
   });
 
   const onSubmit = async (data: ContactFormData) => {
-    console.log("Form Data:", data);
+    if (import.meta.env.DEV) {
+      console.log("Form Data:", data);
+    }
     await new Promise((r) => setTimeout(r, 1600));
 
     setSent(true);
     reset();
   };
-
-  const [sent, setSent] = useState(false);
 
   if (sent) {
     return (
@@ -48,9 +49,10 @@ export const ContactForm: React.FC = () => {
           We'll get back to you within 24 hours.
         </p>
         <button
-          onClick={() => { setSent(false); }}
-          className="mt-2 text-xs text-red-400 hover:text-red-300 transition-colors underline underline-offset-2"
-        >
+          onClick={() => {
+            setSent(false);
+          }}
+          className="mt-2 text-xs text-red-400 hover:text-red-300 transition-colors underline underline-offset-2">
           Send another message
         </button>
       </div>
@@ -62,9 +64,10 @@ export const ContactForm: React.FC = () => {
       <div className="flex flex-col gap-3 ">
         {/* Name + Email row */}
         <div className="grid grid-cols-2 gap-3">
-
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">Name</label>
+            <label className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">
+              Name
+            </label>
             <input
               {...register("name")}
               placeholder="Samy Ahmed"
@@ -78,7 +81,9 @@ export const ContactForm: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">Email</label>
+            <label className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">
+              Email
+            </label>
             <input
               {...register("email")}
               type="email"
@@ -95,23 +100,30 @@ export const ContactForm: React.FC = () => {
 
         {/* Subject */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">Subject</label>
+          <label className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">
+            Subject
+          </label>
           <select
             name="subject"
             className="w-full px-3 py-2.5 rounded-lg bg-[#1a1a1a] border border-[#2e2e2e]
             focus:border-red-500/60 focus:outline-none text-sm transition-colors
-            text-gray-700 [&:not(:placeholder-shown)]:text-gray-200"
-          >
-            <option value="" disabled>Select a topic</option>
+            text-gray-700 not-placeholder-shown:text-gray-200">
+            <option value="" disabled>
+              Select a topic
+            </option>
             {SUBJECTS.map((s) => (
-              <option key={s} value={s} className="bg-[#1a1a1a] text-gray-200">{s}</option>
+              <option key={s} value={s} className="bg-[#1a1a1a] text-gray-200">
+                {s}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Message */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">Message</label>
+          <label className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">
+            Message
+          </label>
           <textarea
             {...register("message")}
             placeholder="How can we help you...?"
@@ -129,11 +141,10 @@ export const ContactForm: React.FC = () => {
         <button
           disabled={isSubmitting}
           className={`w-full py-3 rounded-lg font-semibold text-sm text-white transition-all
-            ${isSubmitting ? "bg-red-800/60" : "bg-red-500 hover:bg-red-600"}`}
-        >
+            ${isSubmitting ? "bg-red-800/60" : "bg-red-500 hover:bg-red-600"}`}>
           {isSubmitting ? "Sending..." : "Send Message"}
         </button>
       </div>
-    </form >
+    </form>
   );
 };

@@ -29,15 +29,14 @@ const Carousels = () => {
   return (
     <div className="w-full flex flex-col items-center py-5 overflow-hidden">
       <div className="container mx-auto">
-        <div className="relative h-[300px] sm:h-[400px] lg:h-[450px] flex justify-center items-center">
+        <div className="relative h-75 sm:h-100 lg:h-112.5 flex justify-center items-center">
           {images.map((img, i) => (
             <div
               key={img.id || i}
               onClick={() => setCur(i)}
               className="absolute flex items-center justify-center cursor-pointer"
-              style={slide(i, cur)}
-            >
-              <div className="relative w-[280px] sm:w-[500px] lg:w-[812px] h-[250px] sm:h-[350px] lg:h-[400px] rounded-[30px] overflow-hidden shadow-2xl bg-[#121212]">
+              style={slide(i, cur)}>
+              <div className="relative w-70 sm:w-125 lg:w-203 h-62.5 sm:h-87.5 lg:h-100 rounded-[30px] overflow-hidden shadow-2xl bg-background">
                 <img
                   src={img.img}
                   alt=""
@@ -58,11 +57,9 @@ const Carousels = () => {
         <div className="flex items-center justify-center gap-4 mt-12 mb-10">
           <button
             onClick={prev}
-            className="p-3 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 hover:text-white transition-colors"
-          >
+            className="p-3 rounded-full bg-raised border border-border text-muted-foreground hover:text-white transition-colors">
             <ChevronLeft size={20} />
           </button>
-
           <div className="flex gap-3 items-center">
             {images.map((_, i) => (
               <button
@@ -72,16 +69,14 @@ const Carousels = () => {
                   "rounded-full transition-all duration-300",
                   i === cur
                     ? "w-3 h-3 bg-accent shadow-[0_0_10px_white]"
-                    : "w-2 h-2 bg-[#999999] hover:bg-gray-400",
+                    : "w-2 h-2 bg-muted-foreground hover:bg-foreground",
                 )}
               />
             ))}
           </div>
-
           <button
             onClick={next}
-            className="p-3 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 hover:text-white transition-colors"
-          >
+            className="p-3 rounded-full bg-raised border border-border text-muted-foreground hover:text-white transition-colors">
             <ChevronRight size={20} />
           </button>
         </div>

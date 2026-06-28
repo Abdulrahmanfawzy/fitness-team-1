@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import type { UseFormRegisterReturn } from "node_modules/react-hook-form/dist/types/form";
 
 interface InputFieldProps {
   label: string;
   placeholder: string;
   type?: string;
-  register: object;
+  register: UseFormRegisterReturn;
   error?: { message?: string };
   icon?: React.ReactNode;
 }

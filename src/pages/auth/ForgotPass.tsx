@@ -1,24 +1,37 @@
 import AuthLayout from "@/components/layout/AuthLayout";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema, type signUpFormData } from "@/lib/schemas/signup.schema";
+import {
+  forgotPasswordSchema,
+  type forgotPasswordFormData,
+} from "@/lib/schemas/password.schema";
 import InputField from "@/components/Auth/InputField";
 import { Mail, ArrowLeft } from "lucide-react";
 import Button from "@/components/common/Button";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { forgotPassword } from "@/lib/api/Auth/auth.api";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<signUpFormData>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<forgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = (data: signUpFormData) => {
-    console.log(data);
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: (_, variables) => {
+      navigate("/auth/verify", { state: { email: variables.email } });
+    },
+  });
+
+  const onSubmit = (data: forgotPasswordFormData) => {
+    mutate({ email: data.email });
   };
 
   return (
@@ -28,11 +41,12 @@ export default function ForgotPassword() {
           <h2 className="font-bold text-4xl text-(--white-color) mt-5">
             Forgot your password?
           </h2>
-          <p className="text-(--gray-color) text-md  font-semibold">
+          <p className="text-(--gray-color) text-md font-semibold">
             Enter your Email Address so we can send you a link to reset your
             password!
           </p>
         </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
           <InputField
             label="Email"
@@ -43,17 +57,22 @@ export default function ForgotPassword() {
             icon={<Mail size={16} />}
           />
 
+          {error && (
+            <p className="text-red-400 text-sm text-center">
+              Something went wrong. Please try again.
+            </p>
+          )}
+
           <Button
-            text="Sign Up"
+            text={isPending ? "Sending..." : "Send OTP"}
             type="submit"
-            onClick={() => navigate("/auth/verify")}
+            disabled={isPending}
           />
         </form>
+
         <Link
           to="/auth/login"
-          className="flex items-center justify-center gap-2 text-(--main-color)
-          font-bold rounded-md cursor-pointer hover:opacity-90
-          transition text-lg">
+          className="flex items-center justify-center gap-2 text-(--main-color) font-bold rounded-md cursor-pointer hover:opacity-90 transition text-lg">
           <ArrowLeft size={20} />
           <p>Go back to Login</p>
         </Link>

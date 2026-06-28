@@ -146,6 +146,7 @@
   --text-primary: #f9fafb;
   --text-secondary: #9ca3af;
   --border-subtle: #1f2937;
+  --gradient-grey: #838383;
 
   --radius: 0.75rem;
   --background: var(--bg-primary);
@@ -369,4 +370,12 @@
 .animate-slideDown {
   animation: slideDown 0.5s ease forwards;
   overflow: hidden;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #2d2d2d inset;
+  -webkit-text-fill-color: #f9fafb;
+  transition: background-color 5000s ease-in-out 0s;
 }

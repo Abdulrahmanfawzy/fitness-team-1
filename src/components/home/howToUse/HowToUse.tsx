@@ -1,4 +1,5 @@
 import SectionHighlight from "@/components/common/SectionHighlight";
+import HeaderP from "../HeaderP";
 import HowToUseCard from "./HowToUseCard";
 import { HOW_TO_USE_STEPS } from "@/lib/constants/home/howToUse.constants";
 
@@ -9,10 +10,10 @@ export default function HowToUse() {
       <h2 className="mt-4 text-center text-h1 font-bold">
         Three Steps to Your Best Self
       </h2>
-      <p className="mt-4 max-w-2xl text-center text-lg text-muted-foreground">
+      <HeaderP textAlign="center" className="mt-4 text-muted-foreground">
         We've made the booking process frictionless so you can focus on what
         matters — your training.
-      </p>
+      </HeaderP>
 
       <div className="mt-10 grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         {HOW_TO_USE_STEPS.map((step) => (

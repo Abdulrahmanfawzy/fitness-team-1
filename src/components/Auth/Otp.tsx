@@ -1,8 +1,14 @@
 import { useRef, useState } from "react";
 
-export default function Otp() {
-  const [otp, setOtp] = useState(["", "", "", ""]);
+interface OtpProps {
+  onChange: (value: string) => void;
+}
+
+export default function Otp({ onChange }: OtpProps) {
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const refs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -14,7 +20,8 @@ export default function Otp() {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-    if (value && index < 3) refs[index + 1].current?.focus();
+    onChange(newOtp.join(""));
+    if (value && index < 5) refs[index + 1].current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -24,7 +31,7 @@ export default function Otp() {
   };
 
   return (
-    <div className="flex justify-center gap-4">
+    <div className="flex justify-center gap-3">
       {otp.map((val, i) => (
         <input
           key={i}
@@ -35,7 +42,7 @@ export default function Otp() {
           value={val}
           onChange={(e) => handleChange(e.target.value, i)}
           onKeyDown={(e) => handleKeyDown(e, i)}
-          className="w-16 h-16 text-center text-2xl font-bold rounded-2xl bg-(--color-bg-raised) text-(--color-text-secondary) border-2 border-transparent placeholder:text-(--color-text-secondary)"
+          className="w-14 h-14 text-center text-2xl font-bold rounded-2xl bg-(--color-bg-raised) text-(--color-text-secondary) border-2 border-transparent focus:border-(--main-color) outline-none placeholder:text-(--color-text-secondary) transition"
         />
       ))}
     </div>

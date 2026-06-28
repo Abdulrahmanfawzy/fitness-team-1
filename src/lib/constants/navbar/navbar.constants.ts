@@ -18,6 +18,6 @@ export const NAVBAR_LINKS: NavbarLinkItem[] = [
 ];
 
 export const NAVBAR_ACTIONS: NavbarActionItem[] = [
-  { label: "Sign up", href: "/auth/login?mode=signup", variant: "primary" },
+  { label: "Sign up", href: "/auth/signup", variant: "primary" },
   { label: "Login", href: "/auth/login", variant: "outline" },
 ];

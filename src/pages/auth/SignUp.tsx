@@ -6,10 +6,12 @@ import InputField from "@/components/Auth/InputField";
 import { Mail, User, Lock } from "lucide-react";
 import Button from "@/components/common/Button";
 import { Link, useNavigate } from "react-router-dom";
-import googleIcon from "@/assets/icons/google.png";
+import { useMutation } from "@tanstack/react-query";
+import { registerUser } from "@/lib/api/Auth/auth.api";
 
 export default function SignUp() {
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -18,14 +20,36 @@ export default function SignUp() {
     resolver: zodResolver(signUpSchema),
   });
 
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: registerUser,
+    onSuccess: (response, variables) => {
+      sessionStorage.setItem(
+        "pending_auth",
+        JSON.stringify({
+          user: response.user,
+          token: response.token,
+        }),
+      );
+      navigate(`/auth/verify?email=${encodeURIComponent(variables.email)}`, {
+        state: { fromRegister: true },
+      });
+    },
+  });
+
   const onSubmit = (data: signUpFormData) => {
-    console.log(data);
+    mutate({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      password_confirmation: data.password_confirmation,
+      role: "trainee",
+    });
   };
 
   return (
     <AuthLayout>
-      <div className="flex flex-col gap-6">
-        <h2 className="font-bold mt-4 text-4xl text-(--white-color) text-center">
+      <div className="flex flex-col gap-6 pt-8 sm:pt-0">
+        <h2 className="font-bold mt-4 text-4xl text-foreground text-center">
           Sign Up
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
@@ -52,28 +76,35 @@ export default function SignUp() {
             error={errors.password}
             icon={<Lock size={16} />}
           />
-          <Button text="Sign Up" type="submit" onClick={() => navigate("/")} />
+          <InputField
+            label="Confirm Password"
+            placeholder="Re-enter your password"
+            type="password"
+            register={register("password_confirmation")}
+            error={errors.password_confirmation}
+            icon={<Lock size={16} />}
+          />
+
+          {error && (
+            <p className="text-destructive text-sm text-center">
+              Registration failed. Please try again.
+            </p>
+          )}
+
+          <Button
+            text={isPending ? "Creating account..." : "Sign Up"}
+            type="submit"
+            disabled={isPending}
+          />
         </form>
-        <p className="font-bold text-(--white-color) flex justify-center items-center gap-2">
+        <p className="font-bold text-foreground flex justify-center items-center gap-2">
           Already have an account?
           <Link
             to="/auth/login"
-            className="text-(--main-color) hover:opacity-80 transition underline">
+            className="text-primary hover:opacity-80 transition underline">
             Login
           </Link>
         </p>
-        <div className="flex items-center gap-3">
-          <hr className="flex-1 border-white/20" />
-          <span className="text-(--gray-color) font-semibold text-sm">
-            Or Sign Up
-          </span>
-          <hr className="flex-1 border-white/20" />
-        </div>
-        <button
-          type="button"
-          className="w-full h-12 rounded-lg bg-(--darkGrey-color) mb-6 cursor-pointer flex items-center justify-center hover:opacity-80 transition">
-          <img src={googleIcon} width={20} height={20} />
-        </button>
       </div>
     </AuthLayout>
   );
