@@ -16,6 +16,7 @@ import Spinner from "@/components/common/Spinner";
 
 interface ScheduleSessionProps {
   trainerId: number;
+  packageId: number;
 }
 
 const DAY_NAME_MAP: Record<number, string> = {
@@ -28,15 +29,16 @@ const DAY_NAME_MAP: Record<number, string> = {
   6: "saturday",
 };
 
-// Format "HH:MM:SS" → "HH:MM" for display
 const formatSlotDisplay = (time: string) => time.slice(0, 5);
 
-export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
+export default function ScheduleSession({
+  trainerId,
+  packageId,
+}: ScheduleSessionProps) {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const { openSheet } = useBookingAuth();
-  const { trainerPackageId, setBookingSelection, setBookingResult } =
-    useBookingContext();
+  const { setBookingSelection, setBookingResult } = useBookingContext();
 
   const [date, setDate] = useState<Date | undefined>();
   const [selectedSlot, setSelectedSlot] = useState<{
@@ -73,7 +75,7 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
     isPending,
     isError,
   } = useMutation({
-    mutationFn: (packageId: number) => {
+    mutationFn: () => {
       if (!selectedSlot) throw new Error("No slot selected");
       const sessionDateTime = buildSessionDateTime(dateStr, selectedSlot.start);
       return scheduleBooking({
@@ -103,12 +105,8 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
       openSheet();
       return;
     }
-    if (!trainerPackageId) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
     if (!date || !selectedSlot) return;
-    createBooking(trainerPackageId);
+    createBooking();
   };
 
   return (
@@ -120,14 +118,9 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
         Pick your preferred date and start your fitness journey.
       </p>
 
-      {!trainerPackageId && (
-        <p className="text-yellow-400 text-sm text-center mb-4">
-          Please select a package above before scheduling.
-        </p>
-      )}
-
       <div className="text-white p-3 sm:p-6 rounded-2xl">
         <div className="flex flex-col sm:grid sm:grid-cols-12 gap-4 sm:gap-6">
+          {/* Calendar */}
           <div className="bg-zinc-800 rounded-xl p-3 sm:p-4 sm:col-span-8">
             <Calendar
               mode="single"
@@ -141,6 +134,7 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
             />
           </div>
 
+          {/* Time slots */}
           <div className="bg-zinc-800 rounded-xl p-3 sm:p-4 sm:col-span-4">
             <p className="text-gray-400 mb-3 text-sm">
               {date ? "Available Times" : "Select a date first"}
@@ -173,6 +167,7 @@ export default function ScheduleSession({ trainerId }: ScheduleSessionProps) {
           </div>
         </div>
 
+        {/* Footer bar */}
         <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-zinc-800 p-3 sm:p-4 rounded-xl">
           <p className="text-gray-300 text-sm text-center sm:text-left">
             {date

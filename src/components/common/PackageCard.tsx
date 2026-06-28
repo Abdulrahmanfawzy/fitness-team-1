@@ -2,7 +2,6 @@ import type { PackageProps } from "@/lib/types/package-types";
 import { HiOutlineCheckCircle } from "react-icons/hi2";
 import { useAuth } from "@/hooks/useAuth";
 import { useBookingAuth } from "@/context/useBookingAuth";
-import { useBookingContext } from "@/hooks/useBookingContext";
 import { useNavigate } from "react-router-dom";
 
 const PackageCard = ({
@@ -16,7 +15,6 @@ const PackageCard = ({
 }: PackageProps) => {
   const { isLoggedIn } = useAuth();
   const { openSheet } = useBookingAuth();
-  const { setTrainerPackageId } = useBookingContext();
   const navigate = useNavigate();
 
   const handleBook = () => {
@@ -24,9 +22,8 @@ const PackageCard = ({
       openSheet();
       return;
     }
-    if (trainerPackageId && onSelectPackage) {
-      setTrainerPackageId(trainerPackageId);
-      onSelectPackage();
+    if (onSelectPackage) {
+      onSelectPackage(trainerPackageId);
       return;
     }
     navigate("/trainers");
@@ -49,10 +46,8 @@ const PackageCard = ({
         </div>
       )}
 
-      {/* Title */}
       <h3 className="text-lg sm:text-xl font-bold text-white mb-5">{title}</h3>
 
-      {/* Price */}
       <div className="mb-1">
         <span
           className={`text-3xl sm:text-4xl font-bold ${isRecommended ? "text-primary" : "text-white"}`}>
@@ -61,7 +56,6 @@ const PackageCard = ({
       </div>
       <span className="text-zinc-500 text-xs mb-5">one-time payment</span>
 
-      {/* Sessions + duration */}
       <div className="flex items-center gap-3 mb-6 pb-6 border-b border-zinc-800">
         <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-400">
           {sessions} sessions
@@ -71,7 +65,6 @@ const PackageCard = ({
         </span>
       </div>
 
-      {/* Features */}
       <ul className="grow space-y-3 mb-8">
         {features.length > 0 ? (
           features.map((feature) => (
@@ -96,14 +89,13 @@ const PackageCard = ({
         )}
       </ul>
 
-      {/* CTA */}
       <button
+        onClick={handleBook}
         className={`w-full py-3 rounded-xl font-bold transition-all duration-200 cursor-pointer text-sm active:scale-[0.98] ${
           isRecommended
             ? "bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/25"
             : "border border-zinc-700 text-white hover:bg-zinc-800 hover:border-zinc-500"
-        }`}
-        onClick={handleBook}>
+        }`}>
         Get Started
       </button>
     </div>

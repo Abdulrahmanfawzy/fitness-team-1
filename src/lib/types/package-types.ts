@@ -5,7 +5,7 @@ export interface PackageProps {
   sessions: string;
   features: string[];
   isRecommended?: boolean;
-  onSelectPackage: () => void;
+  onSelectPackage: (packageId: number) => void;
 }
 
 export interface RawPackageFromAPI {
