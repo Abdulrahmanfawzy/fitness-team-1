@@ -35,7 +35,6 @@ const PackagePage = () => {
           Choose a training plan that matches your goals and schedule
         </p>
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {packages.map((pkg, index) => (
           <PackageCard
@@ -50,9 +49,7 @@ const PackagePage = () => {
           />
         ))}
       </div>
-
       <ComparisonTable />
-
       <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-12">
         <div className="flex items-start gap-4 p-6 bg-raised border border-border rounded-xl">
           <IoShieldCheckmarkSharp className="text-success shrink-0" size={35} />
