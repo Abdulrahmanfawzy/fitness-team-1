@@ -25,7 +25,7 @@ const FilterBar = () => {
   )?.name;
 
   return (
-    <div className="lg:h-95">
+    <div className="lg:h-95 relative z-10">
       <div className="container mx-auto text-white px-4">
         <div className="mb-8 sm:mb-12 lg:mb-16">
           <p className="font-bold text-2xl sm:text-3xl lg:text-4xl">

@@ -6,9 +6,8 @@ import InputField from "@/components/Auth/InputField";
 import { Mail, User, Lock } from "lucide-react";
 import Button from "@/components/common/Button";
 import { Link, useNavigate } from "react-router-dom";
-import googleIcon from "@/assets/icons/google.png";
 import { useMutation } from "@tanstack/react-query";
-import { getGoogleRedirectUrl, registerUser } from "@/lib/api/Auth/auth.api";
+import { registerUser } from "@/lib/api/Auth/auth.api";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -24,7 +23,6 @@ export default function SignUp() {
   const { mutate, isPending, error } = useMutation({
     mutationFn: registerUser,
     onSuccess: (response, variables) => {
-      // Store credentials temporarily — login happens after email verification
       sessionStorage.setItem(
         "pending_auth",
         JSON.stringify({
@@ -48,14 +46,9 @@ export default function SignUp() {
     });
   };
 
-  const handleGoogleLogin = async () => {
-    const { url } = await getGoogleRedirectUrl();
-    window.location.href = url;
-  };
-
   return (
     <AuthLayout>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 pt-8 sm:pt-0">
         <h2 className="font-bold mt-4 text-4xl text-foreground text-center">
           Sign Up
         </h2>
@@ -104,7 +97,6 @@ export default function SignUp() {
             disabled={isPending}
           />
         </form>
-
         <p className="font-bold text-foreground flex justify-center items-center gap-2">
           Already have an account?
           <Link
@@ -113,28 +105,6 @@ export default function SignUp() {
             Login
           </Link>
         </p>
-
-        <div className="flex items-center gap-3">
-          <hr className="flex-1 border-white/20" />
-          <span className="text-muted-foreground font-semibold text-sm">
-            Or Sign Up
-          </span>
-          <hr className="flex-1 border-white/20" />
-        </div>
-
-        <button
-          type="button"
-          aria-label="Sign in with Google"
-          className="w-full h-12 rounded-lg bg-elevated mb-6 cursor-pointer flex items-center justify-center hover:opacity-80 transition"
-          onClick={handleGoogleLogin}>
-          <img
-            src={googleIcon}
-            width={20}
-            height={20}
-            alt="Google Icon"
-            aria-hidden="true"
-          />
-        </button>
       </div>
     </AuthLayout>
   );

@@ -6,7 +6,6 @@ import InputField from "@/components/Auth/InputField";
 import { Mail, Lock, LogIn, ArrowRight } from "lucide-react";
 import Button from "@/components/common/Button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import googleIcon from "@/assets/icons/google.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/lib/api/Auth/auth.api";
@@ -31,10 +30,8 @@ export default function Login() {
   const { mutate, isPending, error } = useMutation({
     mutationFn: loginUser,
     onSuccess: (response) => {
-      const profileComplete = true;
-
-      login(response.user, response.token, profileComplete);
-      navigate(profileComplete ? "/" : "/info");
+      login(response.user, response.token, true);
+      navigate("/");
     },
   });
 
@@ -42,15 +39,15 @@ export default function Login() {
     mutate({ email: data.email, password: data.password });
   };
 
+
   return (
     <AuthLayout>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 pt-8 sm:pt-0">
         <div className="flex justify-center">
           <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
             <LogIn className="text-primary" />
           </div>
         </div>
-
         <div className="flex flex-col gap-4">
           <h2 className="font-bold text-4xl text-foreground text-center">
             Welcome Back!
@@ -59,7 +56,6 @@ export default function Login() {
             Login to your account to continue.
           </p>
         </div>
-
         {location.state?.verified && (
           <div className="px-4 py-3 rounded-xl bg-success/10 border border-success/30 text-center">
             <p className="text-success text-sm font-semibold">
@@ -67,7 +63,6 @@ export default function Login() {
             </p>
           </div>
         )}
-
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
           <InputField
             label="Email"
@@ -107,7 +102,6 @@ export default function Login() {
             disabled={isPending}
           />
         </form>
-
         <p className="font-bold text-foreground flex justify-center items-center gap-2">
           Don't have an account?
           <Link
@@ -116,20 +110,6 @@ export default function Login() {
             Sign up
           </Link>
         </p>
-
-        <div className="flex items-center gap-3">
-          <hr className="flex-1 border-white/20" />
-          <span className="text-muted-foreground font-semibold text-sm">
-            Or Login with
-          </span>
-          <hr className="flex-1 border-white/20" />
-        </div>
-
-        <button
-          type="button"
-          className="w-full h-12 rounded-lg bg-elevated cursor-pointer flex items-center justify-center hover:opacity-80 transition">
-          <img src={googleIcon} width={20} height={20} alt="Google" />
-        </button>
       </div>
     </AuthLayout>
   );
