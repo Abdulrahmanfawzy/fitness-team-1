@@ -16,8 +16,10 @@ export default function WorkoutHistory() {
           Your recent training sessions
         </p>
       </div>
+
       <div className="border border-border rounded-2xl overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-raised/40">
+        {/* Header — hidden on mobile */}
+        <div className="hidden sm:flex items-center justify-between px-6 py-4 border-b border-border bg-raised/40">
           <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
             Workout
           </span>
@@ -30,6 +32,7 @@ export default function WorkoutHistory() {
             </span>
           </div>
         </div>
+
         <div className="flex flex-col gap-2 p-4">
           {workouts.length === 0 ? (
             <p className="text-muted-foreground text-sm p-2">
