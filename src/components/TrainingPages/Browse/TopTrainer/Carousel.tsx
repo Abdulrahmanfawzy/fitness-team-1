@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { images } from "@/lib/constants/PageTraning";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,27 @@ const slide = (i: number, cur: number) => {
 const Carousels = () => {
   const [cur, setCur] = useState(0);
   const next = useCallback(() => setCur((p) => (p + 1) % total), []);
-  const prev = () => setCur((p) => (p - 1 + total) % total);
+  const prev = useCallback(() => setCur((p) => (p - 1 + total) % total), []);
+
+  // Touch support
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        next();
+      } else {          
+        prev();
+      }
+    }
+    touchStartX.current = null;
+  };
 
   useEffect(() => {
     const t = setInterval(next, 4000);
@@ -29,7 +49,10 @@ const Carousels = () => {
   return (
     <div className="w-full flex flex-col items-center py-5 overflow-hidden">
       <div className="container mx-auto">
-        <div className="relative h-75 sm:h-100 lg:h-112.5 flex justify-center items-center">
+        <div
+          className="relative h-75 sm:h-100 lg:h-112.5 flex justify-center items-center"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}>
           {images.map((img, i) => (
             <div
               key={img.id || i}
