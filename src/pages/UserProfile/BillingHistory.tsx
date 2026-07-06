@@ -24,7 +24,8 @@ export default function BillingHistory() {
       </div>
 
       <div className="border border-border rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-5 px-6 py-4 border-b border-border bg-raised/40">
+        {/* Desktop header */}
+        <div className="hidden sm:grid grid-cols-5 px-6 py-4 border-b border-border bg-raised/40">
           {["Invoice", "Date", "Description", "Amount", "Status"].map((h) => (
             <span
               key={h}
@@ -33,6 +34,7 @@ export default function BillingHistory() {
             </span>
           ))}
         </div>
+
         <div className="divide-y divide-border">
           {invoices.length === 0 ? (
             <p className="text-muted-foreground text-sm px-6 py-5">
@@ -40,32 +42,57 @@ export default function BillingHistory() {
             </p>
           ) : (
             invoices.map((inv) => (
-              <div
-                key={inv.invoice_id}
-                className="grid grid-cols-5 items-center px-6 py-5 hover:bg-primary/5 transition-colors duration-200 group">
-                <span className="text-sm text-white/70 group-hover:text-white transition-colors duration-200">
-                  {inv.invoice_id}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {inv.date}
-                </span>
-                <span className="text-sm text-white font-medium">
-                  {inv.description}
-                </span>
-                <span className="text-sm font-bold text-white">
-                  {inv.amount}
-                </span>
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold ${statusStyles[inv.status] ?? "bg-gray-500/15 text-gray-400"}`}>
-                    {inv.status}
+              <div key={inv.invoice_id}>
+                {/* Desktop row */}
+                <div className="hidden sm:grid grid-cols-5 items-center px-6 py-5 hover:bg-primary/5 transition-colors duration-200 group">
+                  <span className="text-sm text-white/70 group-hover:text-white transition-colors duration-200">
+                    {inv.invoice_id}
                   </span>
-                  <button
-                    disabled
-                    title="Download coming soon"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary/20 flex items-center justify-center cursor-pointer">
-                    <Download size={14} className="text-primary" />
-                  </button>
+                  <span className="text-sm text-muted-foreground">
+                    {inv.date}
+                  </span>
+                  <span className="text-sm text-white font-medium">
+                    {inv.description}
+                  </span>
+                  <span className="text-sm font-bold text-white">
+                    {inv.amount}
+                  </span>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold ${statusStyles[inv.status] ?? "bg-gray-500/15 text-gray-400"}`}>
+                      {inv.status}
+                    </span>
+                    <button
+                      disabled
+                      title="Download coming soon"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary/20 flex items-center justify-center cursor-pointer">
+                      <Download size={14} className="text-primary" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Mobile card */}
+                <div className="sm:hidden flex flex-col gap-2 px-4 py-4 hover:bg-primary/5 transition-colors duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-white/50 font-mono">
+                      {inv.invoice_id}
+                    </span>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${statusStyles[inv.status] ?? "bg-gray-500/15 text-gray-400"}`}>
+                      {inv.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-white font-medium">
+                    {inv.description}
+                  </p>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs text-muted-foreground">
+                      {inv.date}
+                    </span>
+                    <span className="text-sm font-bold text-white">
+                      {inv.amount}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))
