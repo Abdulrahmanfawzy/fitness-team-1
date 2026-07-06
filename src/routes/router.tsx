@@ -23,16 +23,13 @@ import PaymentMethods from "@/pages/UserProfile/PaymentMethods";
 import BillingHistory from "@/pages/UserProfile/BillingHistory";
 import SecurityPassword from "@/pages/UserProfile/SecurityPassword";
 import SchedulePage from "@/pages/booking/SchedulePage";
+import ErrorPage from "@/pages/errors/ErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
-    errorElement: (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-foreground">Something went wrong. Please refresh.</p>
-      </div>
-    ),
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
       { path: "trainers", element: <TrainingPage /> },
@@ -73,11 +70,14 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      // catch-all 404 for any unknown path inside MainLayout
+      { path: "*", element: <ErrorPage /> },
     ],
   },
   {
     path: "/auth",
     element: <PublicRoute />,
+    errorElement: <ErrorPage />,
     children: [
       { path: "signup", element: <SignUp /> },
       { path: "login", element: <Login /> },
@@ -85,9 +85,10 @@ export const router = createBrowserRouter([
       { path: "reset-password", element: <ResetPass /> },
     ],
   },
-
   {
     path: "/auth/verify",
     element: <Verify />,
   },
+  // catch-all for anything outside known routes
+  { path: "*", element: <ErrorPage /> },
 ]);
